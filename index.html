@@ -30,7 +30,7 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); 
             margin: 0; display: flex; flex-direction: column; height: 100vh; color: #1c1c1e;
-            overflow: hidden; /* Evita scroll na página inteira, usamos nos containers */
+            overflow: hidden;
         }
 
         .header-widget { 
@@ -46,13 +46,7 @@
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
         }
 
-        /* LAYOUT PRINCIPAL RESPONSIVO */
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            overflow: hidden;
-        }
+        .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
         /* CALENDÁRIO */
         .calendar-section { 
@@ -61,28 +55,19 @@
             transition: all 0.3s ease; flex-shrink: 0;
         }
         .calendar-section.minimized #cal-content { display: none; }
-
         .cal-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 16px; margin: 0; text-transform: capitalize; color: #6c5ce7; }
         .toggle-btn { background: #efeeff; border: none; color: #6c5ce7; padding: 6px 12px; border-radius: 10px; font-weight: 800; font-size: 10px; }
 
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
-        .day { 
-            aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; 
-            justify-content: center; font-weight: 800; font-size: 11px; border: 1px solid #f2f2f7; 
-            position: relative; cursor: pointer;
-        }
+        .day { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 1px solid #f2f2f7; position: relative; cursor: pointer; }
         .day.today { border: 2px solid #6c5ce7; background: #f8f7ff; }
 
         /* LISTA DE TAREFAS */
         .task-list { padding: 10px 20px; flex: 1; overflow-y: auto; }
         .section-title { font-size: 11px; font-weight: 800; color: #8e8e93; margin: 15px 0 10px 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .task-card { 
-            background: var(--white); border-radius: 18px; padding: 14px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            border-left: 5px solid #ddd;
-        }
+        .task-card { background: var(--white); border-radius: 18px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border-left: 5px solid #ddd; }
         .task-card.is-done { opacity: 0.5; filter: grayscale(0.6); }
         .task-card.is-done .task-title { text-decoration: line-through; }
 
@@ -99,11 +84,9 @@
         .task-title { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .task-tag { font-size: 9px; font-weight: 800; text-transform: uppercase; }
 
-        /* AJUSTES PARA TELAS GRANDES (TABLET/NOTEBOOK) */
         @media (min-width: 768px) {
             .main-content { flex-direction: row; padding: 10px; gap: 15px; }
             .calendar-section { width: 350px; margin: 0; height: fit-content; flex-shrink: 0; }
-            .calendar-section.minimized { height: 60px; }
             .task-list { background: var(--white); border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         }
 
@@ -111,10 +94,10 @@
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 1000; padding: 20px; }
         .modal-box { background: var(--white); padding: 25px; border-radius: 25px; width: 100%; max-width: 350px; text-align: center; }
         .cat-selector { display: flex; gap: 5px; margin: 15px 0; }
-        .cat-btn { flex: 1; padding: 8px 2px; border-radius: 10px; border: 2px solid transparent; font-size: 9px; font-weight: 800; }
+        .cat-btn { flex: 1; padding: 8px 2px; border-radius: 10px; border: 2px solid transparent; font-size: 9px; font-weight: 800; cursor: pointer;}
         .cat-btn.selected { border-color: #1c1c1e; }
-        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 15px; text-align: center; }
-        .btn-add { background: var(--grad); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 800; }
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 15px; text-align: center; font-size: 16px; }
+        .btn-add { background: var(--grad); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -156,7 +139,7 @@
             <div id="btn-work" class="cat-btn" style="background:#fff0f3; color:var(--work);" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
             <div id="btn-home" class="cat-btn" style="background:#e6fffa; color:var(--home);" onclick="selectCat('home', '🏠 CASA')">CASA</div>
         </div>
-        <input type="text" id="t-in" placeholder="Descrição da tarefa...">
+        <input type="text" id="t-in" placeholder="Descrição da tarefa..." onkeydown="if(event.key === 'Enter') add()">
         <button class="btn-add" onclick="add()">ADICIONAR</button>
     </div>
 </div>
@@ -240,23 +223,30 @@
     }
 
     function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
+    
     function toggle(id) { 
         const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; 
         if(tasks[i].done) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
         db.ref('hub_raquel_v2026').update({ tasks }); 
     }
+
     function openM(d) { 
         selDate = `${currentViewDate.getFullYear()}-${String(currentViewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         document.getElementById('m-date-text').innerText = d + " de " + document.getElementById('month-display').innerText;
         document.getElementById('modal').style.display="flex"; 
+        // Dá foco automático no input para facilitar o "Enter"
+        setTimeout(() => document.getElementById('t-in').focus(), 100);
     }
+
     function closeM() { document.getElementById('modal').style.display="none"; }
+    
     function add() {
         const v = document.getElementById('t-in').value; if(!v) return;
         tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel });
         db.ref('hub_raquel_v2026').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
+    
     function del(e, i) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); }
 </script>
 </body>
