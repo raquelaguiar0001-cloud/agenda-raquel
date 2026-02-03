@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>RAQUEL AGUIAR | MOTIVATIONAL HUB</title>
+    <title>HUB RAQUEL AGUIAR</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Syne:wght@700&display=swap');
@@ -19,98 +20,119 @@
             --glass: rgba(255, 255, 255, 0.9);
         }
 
+        * { box-sizing: border-box; }
+
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); 
             margin: 0; display: flex; height: 100vh; overflow: hidden; color: #2d3436;
+            flex-direction: row;
         }
 
-        /* SIDEBAR */
-        .sidebar-raquel { 
-            width: 420px; background: var(--glass); backdrop-filter: blur(15px);
+        /* SIDEBAR - Ajustada para Mobile */
+        .sidebar { 
+            width: 350px; background: var(--glass); backdrop-filter: blur(15px);
             border-right: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column;
-            z-index: 10; transition: 0.3s;
+            transition: 0.3s;
         }
 
-        .user-profile { 
-            padding: 40px 30px; background: var(--grad); color: white;
-            border-bottom-right-radius: 40px; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+        .header-profile { 
+            padding: 30px 20px; background: var(--grad); color: white;
+            border-bottom-right-radius: 30px; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.1);
         }
-        .user-profile h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 24px; }
+        .header-profile h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 20px; }
 
-        /* Barra de Progresso */
-        .progress-container { margin-top: 20px; background: rgba(255,255,255,0.2); height: 10px; border-radius: 10px; overflow: hidden; }
-        .progress-bar { background: #55efc4; height: 100%; width: 0%; transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .progress-box { margin-top: 15px; background: rgba(255,255,255,0.2); height: 6px; border-radius: 10px; overflow: hidden; }
+        .bar { background: #55efc4; height: 100%; width: 0%; transition: 0.8s ease; }
 
-        .motivational-msg { font-size: 13px; font-style: italic; margin-top: 10px; min-height: 1.2em; opacity: 0.9; }
-
-        .task-container { flex: 1; overflow-y: auto; padding: 25px; scrollbar-width: none; }
-        .card-task { 
-            background: white; border-radius: 20px; padding: 18px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 15px; border: 2px solid transparent;
-            transition: 0.4s; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer;
-            animation: slideIn 0.5s ease forwards;
+        .task-list { flex: 1; overflow-y: auto; padding: 20px; scrollbar-width: none; }
+        .task-card { 
+            background: white; border-radius: 15px; padding: 12px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px; border: 1px solid #f0f0f0;
+            cursor: pointer; font-size: 13px;
         }
-        .card-task:hover { transform: scale(1.02); }
-        .card-task.done { border-color: #55efc4; background: #f1fefb; }
-        .card-task.done .task-txt { text-decoration: line-through; color: #a0a0a0; }
+        .task-card.done { border-color: #55efc4; background: #f1fefb; opacity: 0.7; }
 
-        .check-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #6c5ce7; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .check-circle.checked { background: #00b894; border-color: #00b894; color: white; transform: rotate(360deg); }
-
-        /* CALENDÁRIO */
-        .main-panel { flex: 1; padding: 50px; overflow-y: auto; }
-        .grid-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
+        /* PAINEL PRINCIPAL */
+        .main { flex: 1; padding: 20px; overflow-y: auto; width: 100%; }
+        
+        /* GRID CALENDÁRIO RESPONSIVO */
+        .calendar { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 8px; 
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
         .day { 
-            background: white; aspect-ratio: 1; border-radius: 22px; padding: 12px;
+            background: white; aspect-ratio: 1; border-radius: 12px; padding: 8px;
             display: flex; flex-direction: column; justify-content: space-between;
-            cursor: pointer; transition: 0.3s; border: 1px solid #f0f0f0; position: relative;
+            cursor: pointer; border: 1px solid #eee; position: relative;
+            min-height: 45px;
         }
-        .day:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(108, 92, 231, 0.1); }
-        
-        /* Cores de Fundo do Dia */
-        .bg-default { background: white; }
-        .bg-lavender { background: #efeeff; border-color: #d1d0ff; }
-        .bg-rose { background: #fff0f3; border-color: #ffccd5; }
-        .bg-mint { background: #e6fffa; border-color: #b2f5ea; }
-        .bg-peach { background: #fff5eb; border-color: #ffe3c2; }
-        .bg-sky { background: #eef2ff; border-color: #c7d2fe; }
+        .day span { font-weight: 800; font-size: 14px; }
 
-        .color-picker { display: flex; gap: 4px; position: absolute; top: 10px; right: 10px; opacity: 0; transition: 0.3s; }
-        .day:hover .color-picker { opacity: 1; }
-        .color-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; }
+        /* CORES DIA */
+        .bg-lavender { background: #efeeff !important; } 
+        .bg-rose { background: #fff0f3 !important; }
+        .bg-mint { background: #e6fffa !important; }
 
-        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.3); display:none; align-items:center; justify-content:center; backdrop-filter: blur(8px); z-index: 100; }
-        .modal-body { background: white; padding: 40px; border-radius: 30px; width: 380px; box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
-        
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        /* ESCONDER PICKER NO MOBILE PARA NÃO ATRAPALHAR */
+        .picker { display: flex; gap: 3px; position: absolute; top: 4px; right: 4px; }
+        .dot-c { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.05); }
+
+        /* MODAL RESPONSIVO */
+        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.4); display:none; align-items:center; justify-content:center; backdrop-filter: blur(5px); z-index: 1000; padding: 20px; }
+        .modal-card { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; }
+
+        /* RESPONSIVIDADE (CELULAR) */
+        @media (max-width: 850px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #eee; }
+            .main { padding: 15px; }
+            .calendar { gap: 5px; }
+            .day { padding: 5px; border-radius: 8px; }
+            .day span { font-size: 12px; }
+            .picker { display: none; } /* Esconde seletor de cor no mobile para simplificar o toque */
+            .header-profile { border-bottom-right-radius: 0; }
+        }
+
+        @media (max-width: 400px) {
+            .day { min-height: 40px; }
+        }
     </style>
 </head>
 <body>
 
-<aside class="sidebar-raquel">
-    <div class="user-profile">
-        <h1 id="greeting">Olá, Raquel Aguiar</h1>
-        <div id="stats" style="font-size: 14px; margin-top: 10px;">Vamos conquistar o dia? 🚀</div>
-        
-        <div class="progress-container">
-            <div id="p-bar" class="progress-bar"></div>
-        </div>
-        <div id="motivation" class="motivational-msg">"Um passo de cada vez, o sucesso é o resultado da sua constância."</div>
+<aside class="sidebar">
+    <div class="header-profile">
+        <h1 id="hi">Olá, Raquel</h1>
+        <div id="msg" style="font-size: 12px; margin-top: 5px; font-weight: 300;">"Vamos brilhar hoje!"</div>
+        <div class="progress-box"><div id="p-bar" class="bar"></div></div>
     </div>
-    <div class="task-container" id="task-list"></div>
+    <div class="task-list" id="list"></div>
 </aside>
 
-<main class="main-panel">
-    <h2 style="font-family:'Syne'; font-size: 32px; margin-bottom: 30px;">Fevereiro <span style="color:#6c5ce7">2026</span></h2>
-    <div class="grid-calendar" id="calendar"></div>
+<main class="main">
+    <h2 style="font-family:'Syne'; font-size: 22px; margin-bottom: 15px; text-align: center;">Fevereiro <span style="color:#6c5ce7">2026</span></h2>
+    <div class="calendar" id="cal"></div>
+    <p style="text-align: center; font-size: 10px; color: #aaa; margin-top: 15px;">Toque no dia para adicionar tarefas</p>
 </main>
 
-<div id="modal" onclick="closeModal()">
-    <div class="modal-body" onclick="event.stopPropagation()">
-        <h2 style="margin:0; font-family:'Syne'; color:#6c5ce7;">Novo Desafio</h2>
-        <input type="text" id="task-input" placeholder="O que vamos realizar hoje? ✨" 
-               style="width: 100%; border: none; background: #f1f2f6; padding: 18px; border-radius: 15px; margin: 25px 0; outline: none;">
-        <button onclick="addTask()" style="background: var(--grad); color: white; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer;">SALVAR ATIVIDADE</button>
+<div id="modal" onclick="closeM()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <h3 id="m-date" style="margin:0; font-family:'Syne'; font-size: 18px;">Nova Atividade</h3>
+        <input type="text" id="t-in" placeholder="O que vamos fazer?" style="width:100%; padding:12px; border-radius:10px; border:1px solid #eee; margin-top:15px; outline:none;">
+        
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+            <p style="font-size: 12px; margin: 0;">Cor do dia:</p>
+            <button onclick="setColDirect('white')" style="width:20px; height:20px; border-radius:50%; background:white; border:1px solid #ccc;"></button>
+            <button onclick="setColDirect('lavender')" style="width:20px; height:20px; border-radius:50%; background:#efeeff; border:none;"></button>
+            <button onclick="setColDirect('rose')" style="width:20px; height:20px; border-radius:50%; background:#fff0f3; border:none;"></button>
+            <button onclick="setColDirect('mint')" style="width:20px; height:20px; border-radius:50%; background:#e6fffa; border:none;"></button>
+        </div>
+
+        <button onclick="add()" style="background: var(--grad); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 20px;">SALVAR</button>
     </div>
 </div>
 
@@ -125,12 +147,9 @@
 
     let tasks = [];
     let daySettings = {};
-    let activeDay = "";
+    let selDate = "";
 
-    const frasesVitoria = ["Arrasou, Raquel! 🌟", "Você é imparável! 🔥", "Feito é melhor que perfeito! ✨", "Mais um passo rumo ao topo! 🚀", "Orgulho da sua dedicação! 💎"];
-    const saudações = ["Foco total, Raquel!", "Dia de brilhar!", "Sua produtividade está incrível!", "Pronta para mais um round?"];
-
-    db.ref('hub_raquel_v6').on('value', snap => {
+    db.ref('hub_raquel_final').on('value', snap => {
         const data = snap.val() || {};
         tasks = data.tasks || [];
         daySettings = data.daySettings || {};
@@ -138,77 +157,64 @@
     });
 
     function render() {
-        const list = document.getElementById('task-list');
-        const doneTasks = tasks.filter(t => t.done).length;
-        const totalTasks = tasks.length;
-        const percent = totalTasks > 0 ? (doneTasks / totalTasks) * 100 : 0;
-
-        document.getElementById('p-bar').style.width = percent + "%";
-        document.getElementById('greeting').innerText = percent === 100 && totalTasks > 0 ? "Missão Cumprida! 🎉" : "Olá, Raquel Aguiar";
+        const hr = new Date().getHours();
+        document.getElementById('hi').innerText = (hr < 12 ? "Bom dia" : hr < 18 ? "Boa tarde" : "Boa noite") + ", Raquel!";
         
-        list.innerHTML = tasks.sort((a,b) => a.done - b.done).map(t => `
-            <div class="card-task ${t.done ? 'done' : ''}" onclick="toggleTask(${t.id}, ${t.done})">
-                <div class="check-circle ${t.done ? 'checked' : ''}">${t.done ? '✓' : ''}</div>
+        const done = tasks.filter(t => t.done).length;
+        const pc = tasks.length > 0 ? (done / tasks.length) * 100 : 0;
+        document.getElementById('p-bar').style.width = pc + "%";
+        
+        if(pc === 100 && tasks.length > 0) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+        document.getElementById('list').innerHTML = tasks.sort((a,b) => a.done - b.done).map(t => `
+            <div class="task-card ${t.done ? 'done' : ''}" onclick="toggle(${t.id}, ${t.done})">
                 <div style="flex:1">
-                    <div class="task-txt" style="font-weight: 600; font-size: 14px;">${t.title}</div>
-                    <div style="font-size: 11px; color: #a29bfe;">Dia ${t.date.split('-')[2]}</div>
+                    <span style="font-weight:600;">${t.title}</span>
+                    <div style="font-size:9px; color:#a29bfe;">Dia ${t.date.split('-')[2]}</div>
                 </div>
-                <button onclick="deleteTask(event, ${t.id})" style="border:none; background:none; opacity:0.3;">✖</button>
+                <button onclick="del(event, ${t.id})" style="border:none; background:none; opacity:0.3; font-size:16px;">×</button>
             </div>
-        `).join('') || `<p style="text-align:center; color:#ccc; margin-top:50px;">Planeje sua próxima vitória clicando no calendário!</p>`;
+        `).join('') || '<p style="text-align:center; color:#ccc; font-size:12px;">Selecione um dia.</p>';
 
-        renderCalendar();
-    }
-
-    function renderCalendar() {
-        const cal = document.getElementById('calendar');
-        cal.innerHTML = "";
+        const grid = document.getElementById('cal');
+        grid.innerHTML = "";
         for(let i=1; i<=28; i++) {
-            const dateStr = `2026-02-${String(i).padStart(2, '0')}`;
-            const dayColor = daySettings[dateStr] || 'default';
-            const dayTasks = tasks.filter(t => t.date === dateStr);
-
-            cal.innerHTML += `
-                <div class="day bg-${dayColor}" onclick="openModal(${i})">
-                    <div class="color-picker">
-                        <div class="color-dot" style="background:#efeeff" onclick="setDayColor(event, '${dateStr}', 'lavender')"></div>
-                        <div class="color-dot" style="background:#fff0f3" onclick="setDayColor(event, '${dateStr}', 'rose')"></div>
-                        <div class="color-dot" style="background:#e6fffa" onclick="setDayColor(event, '${dateStr}', 'mint')"></div>
-                        <div class="color-dot" style="background:white" onclick="setDayColor(event, '${dateStr}', 'default')"></div>
-                    </div>
-                    <span style="font-weight: 800;">${i}</span>
-                    <div style="display:flex; gap:3px;">
-                        ${dayTasks.map(t => `<div style="width:6px; height:6px; border-radius:50%; background:#6c5ce7; ${t.done ? 'background:#00b894' : ''}"></div>`).join('')}
+            const dStr = `2026-02-${String(i).padStart(2, '0')}`;
+            const tks = tasks.filter(t => t.date === dStr);
+            grid.innerHTML += `
+                <div class="day bg-${daySettings[dStr] || 'white'}" onclick="openM(${i})">
+                    <span>${i}</span>
+                    <div style="display:flex; gap:2px; flex-wrap:wrap;">
+                        ${tks.map(t => `<div style="width:4px; height:4px; border-radius:50%; background:#6c5ce7; ${t.done ? 'background:#55efc4' : ''}"></div>`).join('')}
                     </div>
                 </div>`;
         }
     }
 
-    function toggleTask(id, alreadyDone) {
-        const idx = tasks.findIndex(t => t.id === id);
-        tasks[idx].done = !tasks[idx].done;
-        
-        if (!alreadyDone) {
-            document.getElementById('motivation').innerText = frasesVitoria[Math.floor(Math.random() * frasesVitoria.length)];
-            document.getElementById('motivation').style.color = "#00b894";
-            document.getElementById('motivation').style.fontWeight = "bold";
-        }
-
-        db.ref('hub_raquel_v6').update({ tasks });
+    function toggle(id, st) {
+        const i = tasks.findIndex(t => t.id === id);
+        tasks[i].done = !tasks[i].done;
+        if(!st) document.getElementById('msg').innerText = "Arrasou! 🎉";
+        db.ref('hub_raquel_final').update({ tasks });
     }
 
-    function setDayColor(e, date, color) { e.stopPropagation(); daySettings[date] = color; db.ref('hub_raquel_v6').update({ daySettings }); }
-    function openModal(d) { activeDay = `2026-02-${String(d).padStart(2, '0')}`; document.getElementById('modal').style.display = "flex"; }
-    function closeModal() { document.getElementById('modal').style.display = "none"; }
-    function addTask() {
-        const title = document.getElementById('task-input').value;
-        if(!title) return;
-        tasks.push({ id: Date.now(), title, date: activeDay, done: false });
-        db.ref('hub_raquel_v6').update({ tasks });
-        document.getElementById('task-input').value = "";
-        closeModal();
+    function setColDirect(c) {
+        daySettings[selDate] = c;
+        db.ref('hub_raquel_final').update({ daySettings });
     }
-    function deleteTask(e, id) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_v6').update({ tasks }); }
+
+    function openM(d) { selDate = `2026-02-${String(d).padStart(2, '0')}`; document.getElementById('modal').style.display="flex"; }
+    function closeM() { document.getElementById('modal').style.display="none"; }
+    
+    function add() {
+        const v = document.getElementById('t-in').value;
+        if(!v) return;
+        tasks.push({ id: Date.now(), title: v, date: selDate, done: false });
+        db.ref('hub_raquel_final').update({ tasks });
+        document.getElementById('t-in').value = ""; closeM();
+    }
+    
+    function del(e, id) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_final').update({ tasks }); }
 </script>
 </body>
 </html>
