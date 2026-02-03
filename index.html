@@ -48,13 +48,17 @@
 
         .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
-        /* CALENDÁRIO */
-        .calendar-section { background: white; margin: 10px 15px; padding: 18px; border-radius: 25px; flex-shrink: 0; }
+        /* CALENDÁRIO COM RECOLHER */
+        .calendar-section { background: white; margin: 10px 15px; padding: 18px; border-radius: 25px; flex-shrink: 0; transition: all 0.3s ease; }
+        .calendar-section.minimized #cal-content { display: none; }
+        
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
         .day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
         .day.has-task { background: #efeeff; color: #6c5ce7; }
         .day.selected-day { border: 2px solid #6c5ce7; }
         .day.today { background: var(--grad); color: white; }
+
+        .toggle-btn { background: #f0f1f8; border: none; color: #6c5ce7; padding: 6px 12px; border-radius: 10px; font-weight: 800; font-size: 10px; cursor: pointer; }
 
         /* LISTA */
         .task-list { padding: 0 20px 100px; flex: 1; overflow-y: auto; }
@@ -103,15 +107,18 @@
         </div>
     </section>
 
-    <section class="calendar-section">
+    <section class="calendar-section" id="cal-sec">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 id="month-display" style="margin:0; font-family:'Syne'; font-size:16px;">Mês</h3>
-            <div>
+            <button class="toggle-btn" id="t-btn" onclick="toggleCal()">RECOLHER</button>
+        </div>
+        <div id="cal-content">
+            <div style="display:flex; justify-content: space-between; margin-top: 15px;">
                 <button onclick="changeMonth(-1)" style="border:none; background:#f0f1f8; border-radius:8px; padding:5px 12px;">❮</button>
                 <button onclick="changeMonth(1)" style="border:none; background:#f0f1f8; border-radius:8px; padding:5px 12px;">❯</button>
             </div>
+            <div class="grid-cal" id="calendar-grid"></div>
         </div>
-        <div class="grid-cal" id="calendar-grid"></div>
     </section>
 
     <main class="task-list">
@@ -153,29 +160,26 @@
         calculatePerformance();
     });
 
+    function toggleCal() {
+        const sec = document.getElementById('cal-sec');
+        sec.classList.toggle('minimized');
+        document.getElementById('t-btn').innerText = sec.classList.contains('minimized') ? "EXPANDIR" : "RECOLHER";
+    }
+
     function calculatePerformance() {
         const today = new Date();
         const lastWeek = new Date(); lastWeek.setDate(today.getDate() - 7);
-        
         const weekTasks = tasks.filter(t => new Date(t.date) >= lastWeek);
         const done = weekTasks.filter(t => t.done).length;
         const total = weekTasks.length;
-        
         document.getElementById('perf-done').innerText = done;
         const pct = total > 0 ? (done / total) * 100 : 0;
         document.getElementById('perf-bar').style.width = pct + "%";
         document.getElementById('perf-bar').style.background = pct > 70 ? "#2ed573" : (pct > 40 ? "#f9ca24" : "#ff4757");
-
-        // Categoria com mais pendências
         const pending = weekTasks.filter(t => !t.done);
         const counts = pending.reduce((acc, t) => { acc[t.label] = (acc[t.label] || 0) + 1; return acc; }, {});
         const max = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, "Nada!");
         document.getElementById('perf-focus').innerText = total > 0 && pending.length > 0 ? max.split(' ')[1] : "Tudo em dia!";
-    }
-
-    function updateMotivation() {
-        const quotes = ["Raquel, educar a mente é treinar a emoção para ser feliz. - Augusto Cury", "Não tenha medo do caminho, tenha medo de não caminhar.", "O sucesso é a soma de pequenos esforços repetidos dia após dia."];
-        document.getElementById('motivation').innerText = quotes[Math.floor(Math.random() * quotes.length)];
     }
 
     function render() {
@@ -183,14 +187,17 @@
         const completedContainer = document.getElementById('completed-tasks');
         const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
         const sorted = filtered.sort((a,b) => a.date.localeCompare(b.date));
-
         const pnt = sorted.filter(t => !t.done).map(t => createTaskHtml(t)).join('');
         const cmt = sorted.filter(t => t.done).map(t => createTaskHtml(t)).join('');
-
         pendingContainer.innerHTML = `<div class="section-title">Pendentes ${selDate ? 'do dia' : '(Ver Tudo)'}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93;">Nada por aqui ✨</p>');
         completedContainer.innerHTML = cmt ? `<div class="section-title">Concluídas</div>` + cmt : '';
         renderCalendar();
         updateMotivation();
+    }
+
+    function updateMotivation() {
+        const quotes = ["Raquel, educar a mente é treinar a emoção para ser feliz. - Augusto Cury", "Não tenha medo do caminho, tenha medo de não caminhar.", "O sucesso é a soma de pequenos esforços repetidos dia após dia."];
+        document.getElementById('motivation').innerText = quotes[Math.floor(Math.random() * quotes.length)];
     }
 
     function createTaskHtml(t) {
