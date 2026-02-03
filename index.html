@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>HUB RAQUEL AGUIAR</title>
@@ -25,91 +25,90 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); 
             margin: 0; display: flex; flex-direction: column; height: 100vh; color: #1c1c1e;
+            /* Impede o scroll elástico que quebra o layout */
+            overscroll-behavior-y: contain;
         }
 
-        /* HEADER COM LOGO MODERNA */
+        /* HEADER FIXO */
         .header-widget { 
-            padding: 25px 20px; background: var(--white);
+            padding: 30px 20px 20px; background: var(--white);
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 10;
-            display: flex; flex-direction: column; align-items: center; text-align: center;
+            position: relative;
         }
 
-        /* LOGO SVG MODERNA (Baseada na imagem) */
+        /* Botão de Atualizar Discreto */
+        .sync-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: #f2f2f7; border: none; width: 35px; height: 35px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; cursor: pointer; transition: 0.3s;
+        }
+        .sync-btn:active { transform: rotate(180deg); }
+
         .app-logo {
-            width: 60px; height: 60px;
-            background: linear-gradient(135deg, #d19fff, #6c5ce7);
-            border-radius: 16px; margin-bottom: 12px;
+            width: 50px; height: 50px; background: var(--grad);
+            border-radius: 14px; margin: 0 auto 10px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 16px rgba(108, 92, 231, 0.3);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
         }
 
-        .header-widget h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 20px; color: #1c1c1e; }
+        .header-widget h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 18px; text-align: center; }
         
         .progress-container { width: 100%; margin-top: 15px; background: #e5e5ea; height: 6px; border-radius: 10px; overflow: hidden; }
-        .progress-bar { background: var(--grad); height: 100%; width: 0%; transition: 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        .progress-bar { background: var(--grad); height: 100%; width: 0%; transition: 1s ease; }
 
-        /* LISTA DE TAREFAS */
+        /* LISTA */
         .task-list { padding: 20px; flex: 1; overflow-y: auto; }
         .task-card { 
-            background: var(--white); border-radius: 20px; padding: 16px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            animation: fadeIn 0.5s ease;
+            background: var(--white); border-radius: 18px; padding: 15px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
-        .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #f2f2f7; }
+        .task-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #f2f2f7; }
         .task-info { flex: 1; }
         .task-title { font-weight: 700; font-size: 14px; }
-        .task-meta { font-size: 11px; color: #8e8e93; }
 
         /* CALENDÁRIO */
-        .calendar-section { background: var(--white); border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 20px 20px 40px 20px; }
+        .calendar-section { background: var(--white); border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 20px; }
         .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .cal-nav button { background: #f2f2f7; border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; color: #6c5ce7; }
+        .cal-nav button { background: #f2f2f7; border: none; padding: 8px 12px; border-radius: 10px; color: #6c5ce7; font-weight: bold; }
         
-        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-        .weekday { text-align: center; font-size: 10px; font-weight: 800; color: #aeaeae; margin-bottom: 5px; }
-        
+        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
         .day { 
             aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; 
             justify-content: center; font-weight: 700; font-size: 12px;
-            border: 1px solid #f2f2f7; position: relative; cursor: pointer;
+            border: 1px solid #f2f2f7; position: relative;
         }
         .day.today { border: 2px solid #6c5ce7; color: #6c5ce7; }
-        .day.has-task::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; background: #6c5ce7; border-radius: 50%; }
+        .day.has-task::after { content: ''; position: absolute; bottom: 3px; width: 3px; height: 3px; background: #6c5ce7; border-radius: 50%; }
 
-        /* CORES */
         .bg-lavender { background: #efeeff !important; } .bg-rose { background: #fff0f3 !important; } .bg-mint { background: #e6fffa !important; }
 
         /* MODAL */
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 1000; padding: 20px; }
-        .modal-box { background: var(--white); padding: 25px; border-radius: 25px; width: 100%; max-width: 350px; text-align: center; }
-        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #eee; margin: 15px 0; outline: none; text-align: center; }
-        .btn-add { background: var(--grad); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-box { background: var(--white); padding: 25px; border-radius: 25px; width: 100%; max-width: 350px; }
+        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #eee; margin: 15px 0; outline: none; }
+        .btn-add { background: var(--grad); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 800; }
 
         @media (min-width: 850px) {
             body { flex-direction: row; }
-            .header-widget { width: 380px; height: 100vh; border-radius: 0; justify-content: center; }
-            .calendar-section { width: 450px; border-radius: 0; border-left: 1px solid #eee; }
+            .header-widget { width: 350px; height: 100vh; border-radius: 0; }
+            .calendar-section { width: 400px; border-radius: 0; border-left: 1px solid #eee; }
         }
     </style>
 </head>
 <body>
 
 <header class="header-widget">
+    <button class="sync-btn" onclick="location.reload()">🔄</button>
     <div class="app-logo">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M16 2V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8 2V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M3 10H21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 14L14 16L18 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="white" stroke-width="2"/>
+            <path d="M16 2V6M8 2V6M3 10H21" stroke="white" stroke-width="2"/>
         </svg>
     </div>
     <h1>Raquel Aguiar</h1>
     <div class="progress-container"><div id="p-bar" class="progress-bar"></div></div>
-    <p id="stats" style="font-size: 12px; margin-top: 10px; color: #8e8e93;">Carregando seu progresso...</p>
 </header>
 
 <main class="task-list" id="task-container"></main>
@@ -117,26 +116,22 @@
 <section class="calendar-section">
     <div class="cal-nav">
         <button onclick="changeMonth(-1)">❮</button>
-        <h3 id="month-display" style="font-family: 'Syne'; margin: 0; font-size: 18px; text-transform: capitalize;">Mês</h3>
+        <span id="month-display" style="font-weight: 800; text-transform: capitalize;"></span>
         <button onclick="changeMonth(1)">❯</button>
-    </div>
-    <div class="grid-cal">
-        <div class="weekday">Dom</div><div class="weekday">Seg</div><div class="weekday">Ter</div><div class="weekday">Qua</div><div class="weekday">Qui</div><div class="weekday">Sex</div><div class="weekday">Sáb</div>
     </div>
     <div class="grid-cal" id="calendar-grid"></div>
 </section>
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="m-date-text" style="margin:0; font-family:'Syne'; color:#6c5ce7;">Nova Tarefa</h3>
-        <input type="text" id="t-in" placeholder="O que vamos fazer? ✨">
+        <h3 id="m-date-text" style="margin:0; font-family:'Syne';">Nova Tarefa</h3>
+        <input type="text" id="t-in" placeholder="O que agendar? ✨">
         <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <button onclick="setCol('lavender')" style="flex:1; height:35px; border-radius:10px; background:#efeeff; border:none;"></button>
-            <button onclick="setCol('rose')" style="flex:1; height:35px; border-radius:10px; background:#fff0f3; border:none;"></button>
-            <button onclick="setCol('mint')" style="flex:1; height:35px; border-radius:10px; background:#e6fffa; border:none;"></button>
-            <button onclick="setCol('white')" style="flex:1; height:35px; border-radius:10px; background:white; border:1px solid #eee;"></button>
+            <button onclick="setCol('lavender')" style="flex:1; height:30px; border-radius:8px; background:#efeeff; border:none;"></button>
+            <button onclick="setCol('rose')" style="flex:1; height:30px; border-radius:8px; background:#fff0f3; border:none;"></button>
+            <button onclick="setCol('mint')" style="flex:1; height:30px; border-radius:8px; background:#e6fffa; border:none;"></button>
         </div>
-        <button class="btn-add" onclick="add()">ADICIONAR</button>
+        <button class="btn-add" onclick="add()">SALVAR</button>
     </div>
 </div>
 
@@ -154,6 +149,7 @@
     let currentViewDate = new Date(); 
     let selDate = "";
 
+    // ESCUTA EM TEMPO REAL: Se mudar no PC, muda no Celular na hora!
     db.ref('hub_raquel_v2026').on('value', snap => {
         const data = snap.val() || {};
         tasks = data.tasks || [];
@@ -165,8 +161,6 @@
         const done = tasks.filter(t => t.done).length;
         const pc = tasks.length > 0 ? Math.round((done / tasks.length) * 100) : 0;
         document.getElementById('p-bar').style.width = pc + "%";
-        document.getElementById('stats').innerText = `${pc}% do seu dia concluído!`;
-        if(pc === 100 && tasks.length > 0) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
         const container = document.getElementById('task-container');
         container.innerHTML = tasks.filter(t => !t.done).map(t => `
@@ -174,10 +168,10 @@
                 <div class="task-icon">🗓️</div>
                 <div class="task-info">
                     <div class="task-title">${t.title}</div>
-                    <div class="task-meta">Prazo: ${t.date.split('-').reverse().join('/')}</div>
+                    <div style="font-size:10px; color:#8e8e93;">${t.date.split('-').reverse().join('/')}</div>
                 </div>
                 <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ff3b30; font-size:20px;">×</button>
-            </div>`).join('') || '<p style="text-align:center; color:#8e8e93; margin-top:30px; font-size:13px;">Nenhuma tarefa pendente. 🌿</p>';
+            </div>`).join('') || '<p style="text-align:center; color:#8e8e93; font-size:12px;">Nenhuma pendência. ✨</p>';
 
         renderCalendar();
     }
@@ -187,7 +181,7 @@
         grid.innerHTML = "";
         const month = currentViewDate.getMonth();
         const year = currentViewDate.getFullYear();
-        document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
+        document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(currentViewDate);
 
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -198,44 +192,25 @@
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const isToday = new Date().toISOString().split('T')[0] === dateStr;
             const hasTask = tasks.some(t => t.date === dateStr);
-            const color = daySettings[dateStr] || 'white';
-
-            grid.innerHTML += `
-                <div class="day bg-${color} ${isToday ? 'today' : ''} ${hasTask ? 'has-task' : ''}" onclick="openM(${d})">
-                    ${d}
-                </div>`;
+            grid.innerHTML += `<div class="day bg-${daySettings[dateStr] || 'white'} ${isToday ? 'today' : ''} ${hasTask ? 'has-task' : ''}" onclick="openM(${d})">${d}</div>`;
         }
     }
 
-    function changeMonth(step) {
-        currentViewDate.setMonth(currentViewDate.getMonth() + step);
-        renderCalendar();
-    }
-
-    function toggle(id) {
-        const i = tasks.findIndex(t => t.id === id);
-        tasks[i].done = !tasks[i].done;
-        db.ref('hub_raquel_v2026').update({ tasks });
-    }
-
+    function changeMonth(step) { currentViewDate.setMonth(currentViewDate.getMonth() + step); renderCalendar(); }
+    function toggle(id) { const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; db.ref('hub_raquel_v2026').update({ tasks }); }
     function setCol(c) { daySettings[selDate] = c; db.ref('hub_raquel_v2026').update({ daySettings }); }
-    
     function openM(d) { 
         selDate = `${currentViewDate.getFullYear()}-${String(currentViewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        document.getElementById('m-date-text').innerText = `Agendar ${d}/${currentViewDate.getMonth()+1}`;
+        document.getElementById('m-date-text').innerText = `${d}/${currentViewDate.getMonth()+1}`;
         document.getElementById('modal').style.display="flex"; 
     }
-    
     function closeM() { document.getElementById('modal').style.display="none"; }
-    
     function add() {
-        const v = document.getElementById('t-in').value;
-        if(!v) return;
+        const v = document.getElementById('t-in').value; if(!v) return;
         tasks.push({ id: Date.now(), title: v, date: selDate, done: false });
         db.ref('hub_raquel_v2026').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
-    
     function del(e, id) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_v2026').update({ tasks }); }
 </script>
 </body>
