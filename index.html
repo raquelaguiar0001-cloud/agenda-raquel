@@ -18,7 +18,7 @@
 
         :root {
             --grad: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-            --bg: #f0f1f8; /* Fundo lavanda sutil */
+            --bg: #f0f1f8;
             --white: #ffffff;
             --work: #ff4757; 
             --gym: #6c5ce7;  
@@ -33,126 +33,100 @@
             overflow: hidden;
         }
 
-        /* HEADER COLORIDO */
+        /* HEADER */
         .header-widget { 
-            padding: 60px 20px 25px; 
-            background: var(--grad); /* Agora o topo é colorido */
+            padding: 50px 20px 20px; background: var(--grad);
             border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
             box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2); 
             z-index: 100; text-align: center; position: relative; flex-shrink: 0;
         }
 
-        .header-widget h1 { 
-            margin: 0; font-size: 22px; font-family: 'Syne'; 
-            color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .header-widget h1 { margin: 0; font-size: 22px; font-family: 'Syne'; color: white; cursor: pointer; }
 
         .sync-btn {
-            position: absolute; top: 60px; right: 20px;
+            position: absolute; top: 55px; right: 20px;
             background: rgba(255,255,255,0.2); border: none; width: 38px; height: 38px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; backdrop-filter: blur(5px);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;
         }
 
-        .progress-track {
-            width: 100%; background: rgba(255,255,255,0.3); 
-            height: 6px; border-radius: 10px; margin-top: 18px; overflow: hidden;
-        }
-        #p-bar { background: white; height: 100%; width: 0%; transition: 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; padding-top: 5px; }
 
-        .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; padding-top: 10px; }
-
-        /* CALENDÁRIO ESTILIZADO */
+        /* CALENDÁRIO */
         .calendar-section { 
             background: var(--white); margin: 10px 15px; border-radius: 25px;
             padding: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-            transition: all 0.3s ease; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.3s ease; flex-shrink: 0;
         }
         .calendar-section.minimized #cal-content { display: none; }
-        
-        .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 17px; margin: 0; color: #4834d4; }
+        .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 17px; margin: 0; color: #4834d4; text-transform: capitalize; }
         .toggle-btn { background: #f0f1f8; border: none; color: #6c5ce7; padding: 7px 14px; border-radius: 12px; font-weight: 800; font-size: 10px; }
 
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
         .day { 
             aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 800; font-size: 12px; border: 1px solid #f2f2f7; background: #fafafa;
+            font-weight: 800; font-size: 12px; border: 1px solid #f2f2f7; background: #fafafa; cursor: pointer;
         }
-        .day.today { background: var(--grad); color: white; border: none; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3); }
+        .day.selected-day { border: 2px solid #6c5ce7; background: #efeeff; color: #6c5ce7; }
+        .day.today { background: var(--grad); color: white; border: none; }
 
         /* LISTA DE TAREFAS */
         .task-list { padding: 10px 20px; flex: 1; overflow-y: auto; }
-        .section-title { font-size: 12px; font-weight: 800; color: #6c5ce7; margin: 20px 0 12px 5px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .section-title { font-size: 11px; font-weight: 800; color: #6c5ce7; margin: 15px 0 10px 5px; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .clear-filter { font-size: 9px; background: #efeeff; padding: 4px 8px; border-radius: 8px; cursor: pointer; }
 
         .task-card { 
-            background: var(--white); border-radius: 22px; padding: 16px; margin-bottom: 12px; 
-            display: flex; align-items: center; gap: 15px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid rgba(255,255,255,0.7);
+            background: var(--white); border-radius: 20px; padding: 15px; margin-bottom: 10px; 
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            border-left: 6px solid #ddd;
         }
-        .task-card.is-done { opacity: 0.6; background: #f9f9f9; }
+        .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
 
-        .task-icon { 
-            width: 44px; height: 44px; border-radius: 15px; display: flex; 
-            align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; 
-        }
-
-        /* CORES POR CATEGORIA */
-        .card-gym { border-left: 6px solid var(--gym); }
-        .card-work { border-left: 6px solid var(--work); }
-        .card-home { border-left: 6px solid var(--home); }
-        
+        .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .card-gym { border-left-color: var(--gym); }
+        .card-work { border-left-color: var(--work); }
+        .card-home { border-left-color: var(--home); }
         .icon-gym { background: #efeeff; color: var(--gym); }
         .icon-work { background: #fff0f3; color: var(--work); }
         .icon-home { background: #e6fffa; color: var(--home); }
 
         @media (min-width: 768px) {
             .main-content { flex-direction: row; padding: 20px; gap: 20px; }
-            .calendar-section { width: 380px; margin: 0; height: fit-content; }
-            .task-list { background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 30px; padding: 20px; }
+            .calendar-section { width: 380px; margin: 0; }
+            .task-list { background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 30px; }
         }
 
-        /* MODAL COLORIDO */
-        #modal { position: fixed; inset: 0; background: rgba(45, 52, 54, 0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(12px); z-index: 1000; }
-        .modal-box { background: var(--white); padding: 30px; border-radius: 35px; width: 90%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
-        
+        /* MODAL */
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 1000; }
+        .modal-box { background: var(--white); padding: 30px; border-radius: 35px; width: 90%; max-width: 380px; text-align: center; }
         .cat-selector { display: flex; gap: 8px; margin: 20px 0; }
-        .cat-btn { 
-            flex: 1; padding: 12px 5px; border-radius: 15px; border: 2px solid transparent; 
-            font-size: 10px; font-weight: 800; cursor: pointer; opacity: 0.6; transition: 0.3s;
-        }
-        .cat-btn.selected { opacity: 1; transform: translateY(-3px); box-shadow: 0 5px 12px rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.1); }
-        
-        input { 
-            width: 100%; padding: 16px; border-radius: 18px; border: 2px solid #f0f1f8; 
-            margin-bottom: 20px; text-align: center; font-size: 16px; background: #fcfcfd;
-        }
-        .btn-add { 
-            background: var(--grad); color: white; border: none; padding: 18px; 
-            border-radius: 18px; width: 100%; font-weight: 800; font-size: 16px; 
-            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
-        }
+        .cat-btn { flex: 1; padding: 12px 5px; border-radius: 12px; border: 2px solid transparent; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .cat-btn.selected { border-color: #1c1c1e; transform: scale(1.05); }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0f1f8; margin-bottom: 20px; text-align: center; font-size: 16px; }
+        .btn-add { background: var(--grad); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; }
+        .btn-close { margin-top: 15px; background: none; border: none; color: #8e8e93; font-size: 12px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header class="header-widget">
     <button class="sync-btn" onclick="location.reload()">🔄</button>
-    <h1>Agenda Raquel</h1>
-    <div class="progress-track">
-        <div id="p-bar"></div>
+    <h1 onclick="filterDate('')">Agenda Raquel</h1>
+    <div style="width: 100%; background: rgba(255,255,255,0.3); height: 5px; border-radius: 10px; margin-top: 15px; overflow: hidden;">
+        <div id="p-bar" style="background: white; height: 100%; width: 0%; transition: 1s ease;"></div>
     </div>
 </header>
 
 <div class="main-content">
     <section class="calendar-section" id="cal-sec">
-        <div class="cal-header" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleCal()">
+        <div class="cal-header" onclick="toggleCal()" style="display:flex; justify-content:space-between; cursor:pointer;">
             <h3 id="month-display">Mês</h3>
             <button class="toggle-btn" id="t-btn">RECOLHER</button>
         </div>
         <div id="cal-content">
             <div style="display:flex; justify-content: space-between; margin-top: 15px;">
-                <button onclick="changeMonth(-1)" style="border:none; background:#f0f1f8; font-weight:bold; color:#6c5ce7; border-radius:10px; padding:8px 18px;">❮</button>
-                <button onclick="changeMonth(1)" style="border:none; background:#f0f1f8; font-weight:bold; color:#6c5ce7; border-radius:10px; padding:8px 18px;">❯</button>
+                <button onclick="changeMonth(-1)" style="border:none; background:#f0f1f8; font-weight:bold; color:#6c5ce7; border-radius:10px; padding:8px 15px;">❮</button>
+                <button onclick="changeMonth(1)" style="border:none; background:#f0f1f8; font-weight:bold; color:#6c5ce7; border-radius:10px; padding:8px 15px;">❯</button>
             </div>
             <div class="grid-cal" id="calendar-grid"></div>
         </div>
@@ -166,14 +140,15 @@
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="m-date-text" style="font-family:'Syne'; color:#6c5ce7; margin-bottom:10px;">Agendar</h3>
+        <h3 id="m-date-text" style="font-family:'Syne'; color:#6c5ce7;">Agendar</h3>
         <div class="cat-selector">
             <div id="btn-gym" class="cat-btn selected" style="background:#efeeff; color:var(--gym);" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
             <div id="btn-work" class="cat-btn" style="background:#fff0f3; color:var(--work);" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
             <div id="btn-home" class="cat-btn" style="background:#e6fffa; color:var(--home);" onclick="selectCat('home', '🏠 CASA')">CASA</div>
         </div>
-        <input type="text" id="t-in" placeholder="O que temos para hoje?" onkeydown="if(event.key === 'Enter') add()">
-        <button class="btn-add" onclick="add()">SALVAR TAREFA</button>
+        <input type="text" id="t-in" placeholder="Descrição..." onkeydown="if(event.key === 'Enter') add()">
+        <button class="btn-add" onclick="add()">ADICIONAR</button>
+        <button class="btn-close" onclick="closeM()">CANCELAR</button>
     </div>
 </div>
 
@@ -188,7 +163,7 @@
 
     let tasks = [];
     let currentViewDate = new Date(); 
-    let selDate = "";
+    let selDate = ""; // Data para filtro e adição
     let selCat = "gym";
     let selLabel = "💪 ACADEMIA";
 
@@ -209,21 +184,33 @@
         document.getElementById('t-btn').innerText = document.getElementById('cal-sec').classList.contains('minimized') ? "EXPANDIR" : "RECOLHER";
     }
 
+    function filterDate(date) {
+        selDate = date;
+        render();
+    }
+
     function render() {
         const doneCount = tasks.filter(t => t.done).length;
         document.getElementById('p-bar').style.width = (tasks.length > 0 ? (doneCount / tasks.length) * 100 : 0) + "%";
 
         const pendingContainer = document.getElementById('pending-tasks');
         const completedContainer = document.getElementById('completed-tasks');
-        const sorted = [...tasks].sort((a,b) => a.date.localeCompare(b.date));
+        
+        // FILTRAR TAREFAS: Se selDate estiver vazio, mostra todas as futuras. Se não, mostra só do dia.
+        const filtered = selDate 
+            ? tasks.filter(t => t.date === selDate)
+            : tasks;
+
+        const sorted = filtered.sort((a,b) => a.date.localeCompare(b.date));
 
         const pnt = sorted.filter(t => !t.done).map(t => createTaskHtml(t)).join('');
         const cmt = sorted.filter(t => t.done).map(t => createTaskHtml(t)).join('');
 
-        pendingContainer.innerHTML = pnt ? `<div class="section-title">Pendentes</div>` + pnt : '';
+        const filterLabel = selDate ? ` do dia ${selDate.split('-').reverse().join('/')} <span class="clear-filter" onclick="filterDate('')">Ver tudo</span>` : ' (Todas)';
+
+        pendingContainer.innerHTML = `<div class="section-title">Pendentes ${filterLabel}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93; margin-left:5px;">Nada para este dia ✨</p>');
         completedContainer.innerHTML = cmt ? `<div class="section-title">Concluídas</div>` + cmt : '';
         
-        if(!pnt && !cmt) pendingContainer.innerHTML = '<p style="text-align:center; color:#8e8e93; font-size:14px; margin-top:50px; font-weight:600;">✨ Tudo em ordem por aqui!</p>';
         renderCalendar();
     }
 
@@ -233,10 +220,10 @@
                 <div class="task-icon icon-${t.category || 'gym'}">${t.done ? '✅' : (t.category === 'work' ? '💼' : (t.category === 'home' ? '🏠' : '💪'))}</div>
                 <div class="task-info">
                     <div class="task-tag" style="color: var(--${t.category || 'gym'})">${t.label || 'ACADEMIA'}</div>
-                    <div style="font-weight: 700; font-size: 15px; margin: 2px 0;">${t.title}</div>
-                    <div style="font-size:10px; color:#8e8e93; font-weight:600;">📅 ${t.date.split('-').reverse().join('/')}</div>
+                    <div style="font-weight: 700; font-size: 15px;">${t.title}</div>
+                    <div style="font-size:10px; color:#8e8e93; font-weight:600;">${t.date.split('-').reverse().join('/')}</div>
                 </div>
-                <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#d1d1d6; font-size:20px; padding:10px;">×</button>
+                <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:20px; padding:10px;">×</button>
             </div>`;
     }
 
@@ -250,35 +237,35 @@
         for (let d = 1; d <= days; d++) {
             const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const isToday = new Date().toISOString().split('T')[0] === dateStr;
+            const isSelected = selDate === dateStr;
             const hasP = tasks.some(t => t.date === dateStr && !t.done);
-            grid.innerHTML += `<div class="day ${isToday ? 'today' : ''}" onclick="openM(${d})" style="${hasP ? 'border-color:#6c5ce7; color:#6c5ce7; background:#efeeff;' : ''}">${d}</div>`;
+            grid.innerHTML += `<div class="day ${isToday ? 'today' : ''} ${isSelected ? 'selected-day' : ''}" onclick="handleDayClick('${dateStr}', ${d})">${d}${hasP && !isToday ? '<div style="width:4px; height:4px; background:#6c5ce7; border-radius:50%; position:absolute; bottom:4px;"></div>' : ''}</div>`;
         }
     }
 
-    function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
-    
-    function toggle(id) { 
-        const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; 
-        if(tasks[i].done) confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 }, colors: ['#6c5ce7', '#a29bfe', '#ff4757'] });
-        db.ref('hub_raquel_v2026').update({ tasks }); 
-    }
-
-    function openM(d) { 
-        selDate = `${currentViewDate.getFullYear()}-${String(currentViewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        document.getElementById('m-date-text').innerText = d + " de " + document.getElementById('month-display').innerText;
+    function handleDayClick(dateStr, day) {
+        // Ao clicar, filtra a lista
+        filterDate(dateStr);
+        // Pergunta se quer adicionar algo (abrir modal) ou apenas ver
+        // Para manter ágil, vamos abrir o modal se clicar no dia já selecionado
+        document.getElementById('m-date-text').innerText = day + " de " + document.getElementById('month-display').innerText;
         document.getElementById('modal').style.display="flex"; 
         setTimeout(() => document.getElementById('t-in').focus(), 100);
     }
 
+    function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
+    function toggle(id) { 
+        const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; 
+        if(tasks[i].done) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+        db.ref('hub_raquel_v2026').update({ tasks }); 
+    }
     function closeM() { document.getElementById('modal').style.display="none"; }
-    
     function add() {
         const v = document.getElementById('t-in').value; if(!v) return;
         tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel });
         db.ref('hub_raquel_v2026').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
-    
     function del(e, i) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); }
 </script>
 </body>
