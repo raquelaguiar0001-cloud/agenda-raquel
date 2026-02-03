@@ -15,124 +15,109 @@
 
         :root {
             --grad: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-            --success: #00b894;
-            --bg: #f8f9fd;
-            --glass: rgba(255, 255, 255, 0.9);
+            --bg: #f2f2f7; /* Cinza claro estilo Apple */
+            --glass: rgba(255, 255, 255, 0.95);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); 
-            margin: 0; display: flex; height: 100vh; overflow: hidden; color: #2d3436;
-            flex-direction: row;
+            margin: 0; display: flex; flex-direction: column; height: 100vh; color: #1c1c1e;
         }
 
-        /* SIDEBAR - Ajustada para Mobile */
-        .sidebar { 
-            width: 350px; background: var(--glass); backdrop-filter: blur(15px);
-            border-right: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column;
-            transition: 0.3s;
+        /* HEADER ESTILO WIDGET */
+        .header-widget { 
+            padding: 30px 20px; background: white;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;
         }
-
-        .header-profile { 
-            padding: 30px 20px; background: var(--grad); color: white;
-            border-bottom-right-radius: 30px; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.1);
-        }
-        .header-profile h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 20px; }
-
-        .progress-box { margin-top: 15px; background: rgba(255,255,255,0.2); height: 6px; border-radius: 10px; overflow: hidden; }
-        .bar { background: #55efc4; height: 100%; width: 0%; transition: 0.8s ease; }
-
-        .task-list { flex: 1; overflow-y: auto; padding: 20px; scrollbar-width: none; }
-        .task-card { 
-            background: white; border-radius: 15px; padding: 12px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 10px; border: 1px solid #f0f0f0;
-            cursor: pointer; font-size: 13px;
-        }
-        .task-card.done { border-color: #55efc4; background: #f1fefb; opacity: 0.7; }
-
-        /* PAINEL PRINCIPAL */
-        .main { flex: 1; padding: 20px; overflow-y: auto; width: 100%; }
+        .header-widget h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 22px; color: #6c5ce7; }
         
-        /* GRID CALENDÁRIO RESPONSIVO */
-        .calendar { 
-            display: grid; 
-            grid-template-columns: repeat(7, 1fr); 
-            gap: 8px; 
-            max-width: 900px;
-            margin: 0 auto;
+        .progress-container { margin-top: 15px; background: #e5e5ea; height: 8px; border-radius: 10px; overflow: hidden; }
+        .progress-bar { background: var(--grad); height: 100%; width: 0%; transition: 1s cubic-bezier(0.1, 0.7, 0.1, 1); }
+
+        /* CONTAINER DE TAREFAS (ESTILO DA IMAGEM) */
+        .task-list { padding: 0 20px; flex: 1; overflow-y: auto; }
+        
+        .task-card { 
+            background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease;
         }
+        .task-card:active { transform: scale(0.98); }
+
+        /* ÍCONES REDONDOS */
+        .task-icon {
+            width: 45px; height: 45px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; background: #f2f2f7;
+        }
+
+        .task-info { flex: 1; }
+        .task-title { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+        .task-meta { font-size: 12px; color: #8e8e93; }
+
+        /* CALENDÁRIO COMPACTO */
+        .calendar-section { padding: 20px; background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; }
+        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         
         .day { 
-            background: white; aspect-ratio: 1; border-radius: 12px; padding: 8px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            cursor: pointer; border: 1px solid #eee; position: relative;
-            min-height: 45px;
+            aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; 
+            justify-content: center; font-weight: 800; font-size: 13px;
+            border: 1px solid #f2f2f7; position: relative;
         }
-        .day span { font-weight: 800; font-size: 14px; }
-
-        /* CORES DIA */
-        .bg-lavender { background: #efeeff !important; } 
-        .bg-rose { background: #fff0f3 !important; }
-        .bg-mint { background: #e6fffa !important; }
-
-        /* ESCONDER PICKER NO MOBILE PARA NÃO ATRAPALHAR */
-        .picker { display: flex; gap: 3px; position: absolute; top: 4px; right: 4px; }
-        .dot-c { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.05); }
-
-        /* MODAL RESPONSIVO */
-        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.4); display:none; align-items:center; justify-content:center; backdrop-filter: blur(5px); z-index: 1000; padding: 20px; }
-        .modal-card { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; }
-
-        /* RESPONSIVIDADE (CELULAR) */
-        @media (max-width: 850px) {
-            body { flex-direction: column; overflow-y: auto; height: auto; }
-            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #eee; }
-            .main { padding: 15px; }
-            .calendar { gap: 5px; }
-            .day { padding: 5px; border-radius: 8px; }
-            .day span { font-size: 12px; }
-            .picker { display: none; } /* Esconde seletor de cor no mobile para simplificar o toque */
-            .header-profile { border-bottom-right-radius: 0; }
+        .day.has-task::after {
+            content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px;
+            background: #6c5ce7; border-radius: 50%;
         }
 
-        @media (max-width: 400px) {
-            .day { min-height: 40px; }
+        /* CORES DO DIA */
+        .bg-lavender { background: #efeeff !important; border: none; } 
+        .bg-rose { background: #fff0f3 !important; border: none; }
+        .bg-mint { background: #e6fffa !important; border: none; }
+
+        /* MODAL */
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 100; padding: 20px; }
+        .modal-box { background: white; padding: 30px; border-radius: 25px; width: 100%; max-width: 400px; }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin: 15px 0; outline: none; font-size: 16px; }
+        .btn { background: var(--grad); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; }
+
+        @media (min-width: 800px) {
+            body { flex-direction: row; }
+            .header-widget { width: 400px; height: 100vh; border-radius: 0; margin: 0; }
+            .calendar-section { width: 500px; border-radius: 0; }
         }
     </style>
 </head>
 <body>
 
-<aside class="sidebar">
-    <div class="header-profile">
-        <h1 id="hi">Olá, Raquel</h1>
-        <div id="msg" style="font-size: 12px; margin-top: 5px; font-weight: 300;">"Vamos brilhar hoje!"</div>
-        <div class="progress-box"><div id="p-bar" class="bar"></div></div>
-    </div>
-    <div class="task-list" id="list"></div>
-</aside>
+<header class="header-widget">
+    <p style="font-size: 12px; font-weight: 800; color: #8e8e93; margin-bottom: 5px; text-transform: uppercase;">Agenda da Raquel</p>
+    <h1 id="greeting">Boa tarde!</h1>
+    <div class="progress-container"><div id="p-bar" class="progress-bar"></div></div>
+    <p id="stats" style="font-size: 13px; margin-top: 10px; color: #48484a;">Você concluiu 0% hoje.</p>
+</header>
 
-<main class="main">
-    <h2 style="font-family:'Syne'; font-size: 22px; margin-bottom: 15px; text-align: center;">Fevereiro <span style="color:#6c5ce7">2026</span></h2>
-    <div class="calendar" id="cal"></div>
-    <p style="text-align: center; font-size: 10px; color: #aaa; margin-top: 15px;">Toque no dia para adicionar tarefas</p>
-</main>
+<main class="task-list" id="task-container"></main>
+
+<section class="calendar-section">
+    <h2 style="font-family: 'Syne'; font-size: 18px; margin-bottom: 15px;">Fevereiro 2026</h2>
+    <div class="grid-cal" id="calendar-grid"></div>
+</section>
 
 <div id="modal" onclick="closeM()">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <h3 id="m-date" style="margin:0; font-family:'Syne'; font-size: 18px;">Nova Atividade</h3>
-        <input type="text" id="t-in" placeholder="O que vamos fazer?" style="width:100%; padding:12px; border-radius:10px; border:1px solid #eee; margin-top:15px; outline:none;">
-        
-        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
-            <p style="font-size: 12px; margin: 0;">Cor do dia:</p>
-            <button onclick="setColDirect('white')" style="width:20px; height:20px; border-radius:50%; background:white; border:1px solid #ccc;"></button>
-            <button onclick="setColDirect('lavender')" style="width:20px; height:20px; border-radius:50%; background:#efeeff; border:none;"></button>
-            <button onclick="setColDirect('rose')" style="width:20px; height:20px; border-radius:50%; background:#fff0f3; border:none;"></button>
-            <button onclick="setColDirect('mint')" style="width:20px; height:20px; border-radius:50%; background:#e6fffa; border:none;"></button>
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <h3 id="m-date" style="margin:0; font-family:'Syne';">Agendar tarefa</h3>
+        <input type="text" id="t-in" placeholder="Ex: Estudar matemática 📚">
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button onclick="setCol('lavender')" style="flex:1; height:35px; border-radius:10px; background:#efeeff; border:none;"></button>
+            <button onclick="setCol('rose')" style="flex:1; height:35px; border-radius:10px; background:#fff0f3; border:none;"></button>
+            <button onclick="setCol('mint')" style="flex:1; height:35px; border-radius:10px; background:#e6fffa; border:none;"></button>
+            <button onclick="setCol('white')" style="flex:1; height:35px; border-radius:10px; background:white; border:1px solid #eee;"></button>
         </div>
-
-        <button onclick="add()" style="background: var(--grad); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 20px;">SALVAR</button>
+        <button class="btn" onclick="add()">Adicionar à lista</button>
     </div>
 </div>
 
@@ -149,7 +134,7 @@
     let daySettings = {};
     let selDate = "";
 
-    db.ref('hub_raquel_final').on('value', snap => {
+    db.ref('hub_raquel_widget').on('value', snap => {
         const data = snap.val() || {};
         tasks = data.tasks || [];
         daySettings = data.daySettings || {};
@@ -157,64 +142,64 @@
     });
 
     function render() {
+        // Greeting
         const hr = new Date().getHours();
-        document.getElementById('hi').innerText = (hr < 12 ? "Bom dia" : hr < 18 ? "Boa tarde" : "Boa noite") + ", Raquel!";
-        
+        document.getElementById('greeting').innerText = hr < 12 ? "Bom dia!" : hr < 18 ? "Boa tarde!" : "Boa noite!";
+
+        // Stats & Progress
         const done = tasks.filter(t => t.done).length;
-        const pc = tasks.length > 0 ? (done / tasks.length) * 100 : 0;
+        const pc = tasks.length > 0 ? Math.round((done / tasks.length) * 100) : 0;
         document.getElementById('p-bar').style.width = pc + "%";
-        
-        if(pc === 100 && tasks.length > 0) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        document.getElementById('stats').innerText = `Você concluiu ${pc}% das tarefas hoje.`;
+        if(pc === 100 && tasks.length > 0) confetti({ particleCount: 150, spread: 60 });
 
-        document.getElementById('list').innerHTML = tasks.sort((a,b) => a.done - b.done).map(t => `
-            <div class="task-card ${t.done ? 'done' : ''}" onclick="toggle(${t.id}, ${t.done})">
-                <div style="flex:1">
-                    <span style="font-weight:600;">${t.title}</span>
-                    <div style="font-size:9px; color:#a29bfe;">Dia ${t.date.split('-')[2]}</div>
+        // List estilo Widget
+        const container = document.getElementById('task-container');
+        container.innerHTML = tasks.sort((a,b) => a.done - b.done).map(t => {
+            const emoji = t.title.match(/(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/u)?.[0] || '✨';
+            return `
+            <div class="task-card" onclick="toggle(${t.id})">
+                <div class="task-icon" style="background: ${t.done ? '#34c75922' : '#6c5ce711'}">
+                    ${t.done ? '✅' : emoji}
                 </div>
-                <button onclick="del(event, ${t.id})" style="border:none; background:none; opacity:0.3; font-size:16px;">×</button>
-            </div>
-        `).join('') || '<p style="text-align:center; color:#ccc; font-size:12px;">Selecione um dia.</p>';
+                <div class="task-info">
+                    <div class="task-title" style="${t.done ? 'text-decoration: line-through; color: #8e8e93' : ''}">${t.title}</div>
+                    <div class="task-meta">Prazo: Dia ${t.date.split('-')[2]}</div>
+                </div>
+                <button onclick="del(event, ${t.id})" style="border:none; background:none; font-size:18px; color:#ff3b30; padding:10px;">×</button>
+            </div>`;
+        }).join('') || '<p style="text-align:center; color:#8e8e93; margin-top:20px;">Nenhuma tarefa pendente.</p>';
 
-        const grid = document.getElementById('cal');
+        // Grid
+        const grid = document.getElementById('calendar-grid');
         grid.innerHTML = "";
         for(let i=1; i<=28; i++) {
             const dStr = `2026-02-${String(i).padStart(2, '0')}`;
-            const tks = tasks.filter(t => t.date === dStr);
+            const hasTask = tasks.some(t => t.date === dStr);
             grid.innerHTML += `
-                <div class="day bg-${daySettings[dStr] || 'white'}" onclick="openM(${i})">
-                    <span>${i}</span>
-                    <div style="display:flex; gap:2px; flex-wrap:wrap;">
-                        ${tks.map(t => `<div style="width:4px; height:4px; border-radius:50%; background:#6c5ce7; ${t.done ? 'background:#55efc4' : ''}"></div>`).join('')}
-                    </div>
+                <div class="day bg-${daySettings[dStr] || 'white'} ${hasTask ? 'has-task' : ''}" onclick="openM(${i})">
+                    ${i}
                 </div>`;
         }
     }
 
-    function toggle(id, st) {
+    function toggle(id) {
         const i = tasks.findIndex(t => t.id === id);
         tasks[i].done = !tasks[i].done;
-        if(!st) document.getElementById('msg').innerText = "Arrasou! 🎉";
-        db.ref('hub_raquel_final').update({ tasks });
+        db.ref('hub_raquel_widget').update({ tasks });
     }
 
-    function setColDirect(c) {
-        daySettings[selDate] = c;
-        db.ref('hub_raquel_final').update({ daySettings });
-    }
-
+    function setCol(c) { daySettings[selDate] = c; db.ref('hub_raquel_widget').update({ daySettings }); }
     function openM(d) { selDate = `2026-02-${String(d).padStart(2, '0')}`; document.getElementById('modal').style.display="flex"; }
     function closeM() { document.getElementById('modal').style.display="none"; }
-    
     function add() {
         const v = document.getElementById('t-in').value;
         if(!v) return;
         tasks.push({ id: Date.now(), title: v, date: selDate, done: false });
-        db.ref('hub_raquel_final').update({ tasks });
+        db.ref('hub_raquel_widget').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
-    
-    function del(e, id) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_final').update({ tasks }); }
+    function del(e, id) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_widget').update({ tasks }); }
 </script>
 </body>
 </html>
