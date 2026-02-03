@@ -22,7 +22,8 @@
             --white: #ffffff;
             --work: #ff4757; 
             --gym: #6c5ce7;  
-            --home: #2ed573; 
+            --home: #2ed573;
+            --study: #f9ca24; /* Cor para Estudos */
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -56,7 +57,6 @@
 
         .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
-        /* CALENDÁRIO */
         .calendar-section { 
             background: var(--white); margin: 10px 15px; border-radius: 25px;
             padding: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); flex-shrink: 0;
@@ -68,12 +68,10 @@
             aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; 
             font-weight: 800; font-size: 12px; border: 1px solid transparent; background: #ffffff; cursor: pointer; position: relative;
         }
-        /* Cor diferente quando tem tarefa */
         .day.has-task { background: #efeeff; border-color: #dcd9f8; color: #6c5ce7; }
         .day.selected-day { border: 2px solid #6c5ce7 !important; }
         .day.today { background: var(--grad) !important; color: white !important; border: none; }
 
-        /* LISTA DE TAREFAS */
         .task-list { padding: 10px 20px; flex: 1; overflow-y: auto; position: relative; }
         .section-title { font-size: 11px; font-weight: 800; color: #6c5ce7; margin: 15px 0 10px 5px; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; }
         
@@ -87,14 +85,18 @@
         .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
 
         .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        
+        /* CORES CATEGORIAS */
         .card-gym { border-left-color: var(--gym); }
         .card-work { border-left-color: var(--work); }
         .card-home { border-left-color: var(--home); }
+        .card-study { border-left-color: var(--study); }
+
         .icon-gym { background: #efeeff; color: var(--gym); }
         .icon-work { background: #fff0f3; color: var(--work); }
         .icon-home { background: #e6fffa; color: var(--home); }
+        .icon-study { background: #fffbe6; color: var(--study); }
 
-        /* BOTÃO ADICIONAR FLUTUANTE */
         .fab-add {
             position: fixed; bottom: 30px; right: 30px; 
             background: var(--grad); color: white; width: 60px; height: 60px;
@@ -109,11 +111,10 @@
             .task-list { background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 30px; }
         }
 
-        /* MODAL */
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 1000; }
-        .modal-box { background: var(--white); padding: 30px; border-radius: 35px; width: 90%; max-width: 380px; text-align: center; }
-        .cat-selector { display: flex; gap: 8px; margin: 20px 0; }
-        .cat-btn { flex: 1; padding: 12px 5px; border-radius: 12px; border: 2px solid transparent; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .modal-box { background: var(--white); padding: 30px; border-radius: 35px; width: 95%; max-width: 400px; text-align: center; }
+        .cat-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 20px 0; }
+        .cat-btn { padding: 12px 5px; border-radius: 12px; border: 2px solid transparent; font-size: 10px; font-weight: 800; cursor: pointer; }
         .cat-btn.selected { border-color: #1c1c1e; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0f1f8; margin-bottom: 20px; text-align: center; font-size: 16px; }
         .btn-add-submit { background: var(--grad); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; }
@@ -132,9 +133,7 @@
 
 <div class="main-content">
     <section class="calendar-section">
-        <div class="cal-header" style="display:flex; justify-content:space-between;">
-            <h3 id="month-display">Mês</h3>
-        </div>
+        <div class="cal-header"><h3 id="month-display">Mês</h3></div>
         <div id="cal-content">
             <div style="display:flex; justify-content: space-between; margin-top: 15px;">
                 <button onclick="changeMonth(-1)" style="border:none; background:#f0f1f8; font-weight:bold; color:#6c5ce7; border-radius:10px; padding:8px 15px;">❮</button>
@@ -159,6 +158,7 @@
             <div id="btn-gym" class="cat-btn selected" style="background:#efeeff; color:var(--gym);" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
             <div id="btn-work" class="cat-btn" style="background:#fff0f3; color:var(--work);" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
             <div id="btn-home" class="cat-btn" style="background:#e6fffa; color:var(--home);" onclick="selectCat('home', '🏠 CASA')">CASA</div>
+            <div id="btn-study" class="cat-btn" style="background:#fffbe6; color:var(--study);" onclick="selectCat('study', '📚 ESTUDOS')">ESTUDOS</div>
         </div>
         <input type="text" id="t-in" placeholder="Descrição..." onkeydown="if(event.key === 'Enter') add()">
         <button class="btn-add-submit" onclick="add()">ADICIONAR</button>
@@ -181,9 +181,9 @@
     let selLabel = "💪 ACADEMIA";
 
     const quotes = [
-        "Raquel, educar a mente é treinar a emoção para ser feliz. - Augusto Cury",
-        "Não tenha medo do caminho, tenha medo de não caminhar. - Augusto Cury",
-        "Vencer sem riscos é triunfar sem glórias. Vamos para cima! 💪",
+        "Raquel, o conhecimento é a única coisa que ninguém pode te tirar. - Augusto Cury",
+        "Estudar é o caminho para conquistar o que os outros acham impossível.",
+        "Raquel, sem sonhos, a vida não tem brilho. Foque nos seus estudos hoje!",
     ];
 
     db.ref('hub_raquel_v2026').on('value', snap => {
@@ -197,11 +197,11 @@
         const banner = document.getElementById('motivation');
         const todayStr = new Date().toISOString().split('T')[0];
         const todayTasks = tasks.filter(t => t.date === todayStr);
-        const gymPending = todayTasks.some(t => t.category === 'gym' && !t.done);
+        const studyPending = todayTasks.some(t => t.category === 'study' && !t.done);
         
-        if (gymPending) {
-            banner.innerHTML = "🏋️‍♀️ <b>Raquel, o treino de hoje te espera!</b> Foco na saúde.";
-            banner.style.background = "rgba(255, 71, 87, 0.3)";
+        if (studyPending) {
+            banner.innerHTML = "📚 <b>Hora de evoluir, Raquel!</b> Seus estudos de hoje são o sucesso de amanhã.";
+            banner.style.background = "rgba(249, 202, 36, 0.4)";
         } else {
             banner.innerText = quotes[Math.floor(Math.random() * quotes.length)];
             banner.style.background = "rgba(255, 255, 255, 0.15)";
@@ -236,9 +236,10 @@
     }
 
     function createTaskHtml(t) {
+        const icon = t.category === 'study' ? '📚' : (t.category === 'work' ? '💼' : (t.category === 'home' ? '🏠' : '💪'));
         return `
             <div class="task-card card-${t.category || 'gym'} ${t.done ? 'is-done' : ''}" onclick="toggle(${t.id})">
-                <div class="task-icon icon-${t.category || 'gym'}">${t.done ? '✅' : (t.category === 'work' ? '💼' : (t.category === 'home' ? '🏠' : '💪'))}</div>
+                <div class="task-icon icon-${t.category || 'gym'}">${t.done ? '✅' : icon}</div>
                 <div class="task-info">
                     <div class="task-tag" style="color: var(--${t.category || 'gym'})">${t.label || 'ACADEMIA'}</div>
                     <div style="font-weight: 700; font-size: 15px;">${t.title}</div>
