@@ -33,7 +33,6 @@
             overflow: hidden;
         }
 
-        /* HEADER */
         .header-widget { 
             padding: 50px 20px 20px; background: var(--grad);
             border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
@@ -43,18 +42,10 @@
 
         .header-widget h1 { margin: 0; font-size: 22px; font-family: 'Syne'; color: white; cursor: pointer; }
 
-        /* BANNER MOTIVACIONAL */
         .motivation-banner {
-            background: rgba(255, 255, 255, 0.15);
-            margin: 12px 0 0;
-            padding: 10px 15px;
-            border-radius: 15px;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            line-height: 1.4;
+            background: rgba(255, 255, 255, 0.15); margin: 12px 0 0; padding: 10px 15px;
+            border-radius: 15px; color: white; font-size: 13px; font-weight: 600;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); line-height: 1.4;
         }
 
         .sync-btn {
@@ -63,28 +54,27 @@
             border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;
         }
 
-        .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; padding-top: 5px; }
+        .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
         /* CALENDÁRIO */
         .calendar-section { 
             background: var(--white); margin: 10px 15px; border-radius: 25px;
-            padding: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-            transition: all 0.3s ease; flex-shrink: 0;
+            padding: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); flex-shrink: 0;
         }
-        .calendar-section.minimized #cal-content { display: none; }
         .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 17px; margin: 0; color: #4834d4; text-transform: capitalize; }
-        .toggle-btn { background: #f0f1f8; border: none; color: #6c5ce7; padding: 7px 14px; border-radius: 12px; font-weight: 800; font-size: 10px; }
 
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
         .day { 
             aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 800; font-size: 12px; border: 1px solid #f2f2f7; background: #fafafa; cursor: pointer; position: relative;
+            font-weight: 800; font-size: 12px; border: 1px solid transparent; background: #ffffff; cursor: pointer; position: relative;
         }
-        .day.selected-day { border: 2px solid #6c5ce7; background: #efeeff; color: #6c5ce7; }
-        .day.today { background: var(--grad); color: white; border: none; }
+        /* Cor diferente quando tem tarefa */
+        .day.has-task { background: #efeeff; border-color: #dcd9f8; color: #6c5ce7; }
+        .day.selected-day { border: 2px solid #6c5ce7 !important; }
+        .day.today { background: var(--grad) !important; color: white !important; border: none; }
 
         /* LISTA DE TAREFAS */
-        .task-list { padding: 10px 20px; flex: 1; overflow-y: auto; }
+        .task-list { padding: 10px 20px; flex: 1; overflow-y: auto; position: relative; }
         .section-title { font-size: 11px; font-weight: 800; color: #6c5ce7; margin: 15px 0 10px 5px; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; }
         
         .clear-filter { font-size: 9px; background: #efeeff; padding: 4px 8px; border-radius: 8px; cursor: pointer; }
@@ -104,6 +94,15 @@
         .icon-work { background: #fff0f3; color: var(--work); }
         .icon-home { background: #e6fffa; color: var(--home); }
 
+        /* BOTÃO ADICIONAR FLUTUANTE */
+        .fab-add {
+            position: fixed; bottom: 30px; right: 30px; 
+            background: var(--grad); color: white; width: 60px; height: 60px;
+            border-radius: 50%; border: none; font-size: 30px; font-weight: bold;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4); display: none;
+            align-items: center; justify-content: center; z-index: 500; cursor: pointer;
+        }
+
         @media (min-width: 768px) {
             .main-content { flex-direction: row; padding: 20px; gap: 20px; }
             .calendar-section { width: 380px; margin: 0; }
@@ -115,9 +114,9 @@
         .modal-box { background: var(--white); padding: 30px; border-radius: 35px; width: 90%; max-width: 380px; text-align: center; }
         .cat-selector { display: flex; gap: 8px; margin: 20px 0; }
         .cat-btn { flex: 1; padding: 12px 5px; border-radius: 12px; border: 2px solid transparent; font-size: 10px; font-weight: 800; cursor: pointer; }
-        .cat-btn.selected { border-color: #1c1c1e; transform: scale(1.05); }
+        .cat-btn.selected { border-color: #1c1c1e; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0f1f8; margin-bottom: 20px; text-align: center; font-size: 16px; }
-        .btn-add { background: var(--grad); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; }
+        .btn-add-submit { background: var(--grad); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -125,21 +124,16 @@
 <header class="header-widget">
     <button class="sync-btn" onclick="location.reload()">🔄</button>
     <h1 onclick="filterDate('')">Agenda Raquel</h1>
-    
-    <div id="motivation" class="motivation-banner">
-        "Os problemas nunca vão desaparecer, mas a força para superá-los nasce do seu interior."
-    </div>
-
+    <div id="motivation" class="motivation-banner">"Pense antes de reagir."</div>
     <div style="width: 100%; background: rgba(255,255,255,0.3); height: 5px; border-radius: 10px; margin-top: 15px; overflow: hidden;">
         <div id="p-bar" style="background: white; height: 100%; width: 0%; transition: 1s ease;"></div>
     </div>
 </header>
 
 <div class="main-content">
-    <section class="calendar-section" id="cal-sec">
-        <div class="cal-header" onclick="toggleCal()" style="display:flex; justify-content:space-between; cursor:pointer;">
+    <section class="calendar-section">
+        <div class="cal-header" style="display:flex; justify-content:space-between;">
             <h3 id="month-display">Mês</h3>
-            <button class="toggle-btn" id="t-btn">RECOLHER</button>
         </div>
         <div id="cal-content">
             <div style="display:flex; justify-content: space-between; margin-top: 15px;">
@@ -156,6 +150,8 @@
     </main>
 </div>
 
+<button id="add-fab" class="fab-add" onclick="openModal()">+</button>
+
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <h3 id="m-date-text" style="font-family:'Syne'; color:#6c5ce7;">Agendar</h3>
@@ -165,7 +161,7 @@
             <div id="btn-home" class="cat-btn" style="background:#e6fffa; color:var(--home);" onclick="selectCat('home', '🏠 CASA')">CASA</div>
         </div>
         <input type="text" id="t-in" placeholder="Descrição..." onkeydown="if(event.key === 'Enter') add()">
-        <button class="btn-add" onclick="add()">ADICIONAR</button>
+        <button class="btn-add-submit" onclick="add()">ADICIONAR</button>
     </div>
 </div>
 
@@ -185,11 +181,9 @@
     let selLabel = "💪 ACADEMIA";
 
     const quotes = [
-        "Raquel, educar a mente é treinar a emoção para ser feliz nos terrenos da inteligência. - Augusto Cury",
+        "Raquel, educar a mente é treinar a emoção para ser feliz. - Augusto Cury",
         "Não tenha medo do caminho, tenha medo de não caminhar. - Augusto Cury",
-        "Raquel, sem sonhos, a vida não tem brilho. Sem metas, os sonhos não têm alicerces. - Augusto Cury",
         "Vencer sem riscos é triunfar sem glórias. Vamos para cima! 💪",
-        "Cada tarefa concluída é um passo rumo à sua melhor versão, Raquel! ✨"
     ];
 
     db.ref('hub_raquel_v2026').on('value', snap => {
@@ -204,33 +198,19 @@
         const todayStr = new Date().toISOString().split('T')[0];
         const todayTasks = tasks.filter(t => t.date === todayStr);
         const gymPending = todayTasks.some(t => t.category === 'gym' && !t.done);
-        const othersPending = todayTasks.some(t => t.category !== 'gym' && !t.done);
-
+        
         if (gymPending) {
-            banner.innerHTML = "🏋️‍♀️ <b>Raquel, o treino de hoje é o seu compromisso com você mesma!</b> Não deixe para amanhã.";
+            banner.innerHTML = "🏋️‍♀️ <b>Raquel, o treino de hoje te espera!</b> Foco na saúde.";
             banner.style.background = "rgba(255, 71, 87, 0.3)";
-        } else if (othersPending) {
-            banner.innerHTML = "🚀 <b>Foco no processo!</b> Você já começou, agora finalize as tarefas para ter um descanso merecido.";
-            banner.style.background = "rgba(255, 255, 255, 0.2)";
         } else {
             banner.innerText = quotes[Math.floor(Math.random() * quotes.length)];
             banner.style.background = "rgba(255, 255, 255, 0.15)";
         }
     }
 
-    function selectCat(cat, label) {
-        selCat = cat; selLabel = label;
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
-        document.getElementById('btn-' + cat).classList.add('selected');
-    }
-
-    function toggleCal() {
-        document.getElementById('cal-sec').classList.toggle('minimized');
-        document.getElementById('t-btn').innerText = document.getElementById('cal-sec').classList.contains('minimized') ? "EXPANDIR" : "RECOLHER";
-    }
-
     function filterDate(date) {
         selDate = date;
+        document.getElementById('add-fab').style.display = date ? "flex" : "none";
         render();
     }
 
@@ -249,7 +229,7 @@
 
         const filterLabel = selDate ? ` do dia ${selDate.split('-').reverse().join('/')} <span class="clear-filter" onclick="filterDate('')">Ver tudo</span>` : ' (Todas)';
 
-        pendingContainer.innerHTML = `<div class="section-title">Pendentes ${filterLabel}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93; margin-left:5px;">Nada para hoje ✨</p>');
+        pendingContainer.innerHTML = `<div class="section-title">Pendentes ${filterLabel}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93; margin-left:5px;">Nenhuma tarefa pendente ✨</p>');
         completedContainer.innerHTML = cmt ? `<div class="section-title">Concluídas</div>` + cmt : '';
         
         renderCalendar();
@@ -274,40 +254,43 @@
         document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
         const first = new Date(y, m, 1).getDay();
         const days = new Date(y, m + 1, 0).getDate();
-        for (let i = 0; i < first; i++) grid.innerHTML += `<div class="day" style="border:none; background:none;"></div>`;
+        for (let i = 0; i < first; i++) grid.innerHTML += `<div class="day" style="background:none; cursor:default;"></div>`;
         for (let d = 1; d <= days; d++) {
             const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const isToday = new Date().toISOString().split('T')[0] === dateStr;
+            const hasP = tasks.some(t => t.date === dateStr);
             const isSelected = selDate === dateStr;
-            const hasP = tasks.some(t => t.date === dateStr && !t.done);
-            grid.innerHTML += `<div class="day ${isToday ? 'today' : ''} ${isSelected ? 'selected-day' : ''}" onclick="handleDayClick('${dateStr}', ${d})">${d}${hasP && !isToday ? '<div style="width:4px; height:4px; background:#6c5ce7; border-radius:50%; position:absolute; bottom:4px;"></div>' : ''}</div>`;
+            grid.innerHTML += `<div class="day ${hasP ? 'has-task' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected-day' : ''}" onclick="filterDate('${dateStr}')">${d}</div>`;
         }
     }
 
-    function handleDayClick(dateStr, day) {
-        filterDate(dateStr);
-        document.getElementById('m-date-text').innerText = day + " de " + document.getElementById('month-display').innerText;
+    function openModal() {
+        if(!selDate) return;
+        const d = selDate.split('-')[2];
+        document.getElementById('m-date-text').innerText = d + " de " + document.getElementById('month-display').innerText;
         document.getElementById('modal').style.display="flex"; 
         setTimeout(() => document.getElementById('t-in').focus(), 100);
     }
 
+    function selectCat(cat, label) {
+        selCat = cat; selLabel = label;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('btn-' + cat).classList.add('selected');
+    }
+
     function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
-    
     function toggle(id) { 
         const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; 
         if(tasks[i].done) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
         db.ref('hub_raquel_v2026').update({ tasks }); 
     }
-
     function closeM() { document.getElementById('modal').style.display="none"; }
-    
     function add() {
         const v = document.getElementById('t-in').value; if(!v) return;
         tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel });
         db.ref('hub_raquel_v2026').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
-    
     function del(e, i) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); }
 </script>
 </body>
