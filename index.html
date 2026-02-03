@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>HUB RAQUEL AGUIAR | 2026 FULL</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>HUB RAQUEL AGUIAR</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
@@ -16,7 +17,7 @@
         :root {
             --grad: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
             --bg: #f2f2f7;
-            --glass: rgba(255, 255, 255, 0.95);
+            --white: #ffffff;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -26,57 +27,70 @@
             margin: 0; display: flex; flex-direction: column; height: 100vh; color: #1c1c1e;
         }
 
-        /* HEADER WIDGET */
+        /* HEADER COM LOGO MODERNA */
         .header-widget { 
-            padding: 25px 20px; background: white;
+            padding: 25px 20px; background: var(--white);
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 10;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
         }
-        .header-widget h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 22px; color: #6c5ce7; }
+
+        /* LOGO SVG MODERNA (Baseada na imagem) */
+        .app-logo {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #d19fff, #6c5ce7);
+            border-radius: 16px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 16px rgba(108, 92, 231, 0.3);
+        }
+
+        .header-widget h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 20px; color: #1c1c1e; }
         
-        .progress-container { margin-top: 15px; background: #e5e5ea; height: 6px; border-radius: 10px; overflow: hidden; }
-        .progress-bar { background: var(--grad); height: 100%; width: 0%; transition: 1s ease; }
+        .progress-container { width: 100%; margin-top: 15px; background: #e5e5ea; height: 6px; border-radius: 10px; overflow: hidden; }
+        .progress-bar { background: var(--grad); height: 100%; width: 0%; transition: 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
 
         /* LISTA DE TAREFAS */
         .task-list { padding: 20px; flex: 1; overflow-y: auto; }
         .task-card { 
-            background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px;
+            background: var(--white); border-radius: 20px; padding: 16px; margin-bottom: 12px;
             display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            animation: fadeIn 0.5s ease;
         }
         .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #f2f2f7; }
         .task-info { flex: 1; }
         .task-title { font-weight: 700; font-size: 14px; }
         .task-meta { font-size: 11px; color: #8e8e93; }
 
-        /* SEÇÃO CALENDÁRIO COM NAVEGAÇÃO */
-        .calendar-section { background: white; border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 20px; padding-bottom: 30px; }
+        /* CALENDÁRIO */
+        .calendar-section { background: var(--white); border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 20px 20px 40px 20px; }
         .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .cal-nav button { background: #f2f2f7; border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-weight: bold; color: #6c5ce7; }
+        .cal-nav button { background: #f2f2f7; border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; color: #6c5ce7; }
         
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-        .weekday { text-align: center; font-size: 10px; font-weight: 800; color: #aeaeae; margin-bottom: 5px; text-transform: uppercase; }
+        .weekday { text-align: center; font-size: 10px; font-weight: 800; color: #aeaeae; margin-bottom: 5px; }
         
         .day { 
             aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; 
             justify-content: center; font-weight: 700; font-size: 12px;
             border: 1px solid #f2f2f7; position: relative; cursor: pointer;
         }
-        .day.empty { border: none; pointer-events: none; }
-        .day.today { border: 2px solid #6c5ce7; }
-        .day.has-task::after { content: ''; position: absolute; bottom: 3px; width: 3px; height: 3px; background: #6c5ce7; border-radius: 50%; }
+        .day.today { border: 2px solid #6c5ce7; color: #6c5ce7; }
+        .day.has-task::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; background: #6c5ce7; border-radius: 50%; }
 
         /* CORES */
         .bg-lavender { background: #efeeff !important; } .bg-rose { background: #fff0f3 !important; } .bg-mint { background: #e6fffa !important; }
 
         /* MODAL */
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 1000; padding: 20px; }
-        .modal-box { background: white; padding: 25px; border-radius: 25px; width: 100%; max-width: 350px; }
-        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #eee; margin: 15px 0; outline: none; }
-        .btn-add { background: var(--grad); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 800; }
+        .modal-box { background: var(--white); padding: 25px; border-radius: 25px; width: 100%; max-width: 350px; text-align: center; }
+        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #eee; margin: 15px 0; outline: none; text-align: center; }
+        .btn-add { background: var(--grad); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (min-width: 850px) {
             body { flex-direction: row; }
-            .header-widget { width: 380px; height: 100vh; border-radius: 0; }
+            .header-widget { width: 380px; height: 100vh; border-radius: 0; justify-content: center; }
             .calendar-section { width: 450px; border-radius: 0; border-left: 1px solid #eee; }
         }
     </style>
@@ -84,10 +98,18 @@
 <body>
 
 <header class="header-widget">
-    <p style="font-size: 11px; font-weight: 800; color: #8e8e93; margin-bottom: 5px; text-transform: uppercase;">Hub de Raquel Aguiar</p>
-    <h1 id="greeting">Boa tarde!</h1>
+    <div class="app-logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 2V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 2V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 10H21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 14L14 16L18 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+    <h1>Raquel Aguiar</h1>
     <div class="progress-container"><div id="p-bar" class="progress-bar"></div></div>
-    <p id="stats" style="font-size: 12px; margin-top: 10px; color: #48484a;">Organizando seu 2026...</p>
+    <p id="stats" style="font-size: 12px; margin-top: 10px; color: #8e8e93;">Carregando seu progresso...</p>
 </header>
 
 <main class="task-list" id="task-container"></main>
@@ -98,21 +120,21 @@
         <h3 id="month-display" style="font-family: 'Syne'; margin: 0; font-size: 18px; text-transform: capitalize;">Mês</h3>
         <button onclick="changeMonth(1)">❯</button>
     </div>
-    <div class="grid-cal" id="calendar-weekdays">
-        <div class="weekday">D</div><div class="weekday">S</div><div class="weekday">T</div><div class="weekday">Q</div><div class="weekday">Q</div><div class="weekday">S</div><div class="weekday">S</div>
+    <div class="grid-cal">
+        <div class="weekday">Dom</div><div class="weekday">Seg</div><div class="weekday">Ter</div><div class="weekday">Qua</div><div class="weekday">Qui</div><div class="weekday">Sex</div><div class="weekday">Sáb</div>
     </div>
     <div class="grid-cal" id="calendar-grid"></div>
 </section>
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="m-date-text" style="margin:0; font-family:'Syne';">Nova Tarefa</h3>
-        <input type="text" id="t-in" placeholder="O que vamos agendar? ✨">
+        <h3 id="m-date-text" style="margin:0; font-family:'Syne'; color:#6c5ce7;">Nova Tarefa</h3>
+        <input type="text" id="t-in" placeholder="O que vamos fazer? ✨">
         <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <button onclick="setCol('lavender')" style="flex:1; height:30px; border-radius:8px; background:#efeeff; border:none;"></button>
-            <button onclick="setCol('rose')" style="flex:1; height:30px; border-radius:8px; background:#fff0f3; border:none;"></button>
-            <button onclick="setCol('mint')" style="flex:1; height:30px; border-radius:8px; background:#e6fffa; border:none;"></button>
-            <button onclick="setCol('white')" style="flex:1; height:30px; border-radius:8px; background:white; border:1px solid #eee;"></button>
+            <button onclick="setCol('lavender')" style="flex:1; height:35px; border-radius:10px; background:#efeeff; border:none;"></button>
+            <button onclick="setCol('rose')" style="flex:1; height:35px; border-radius:10px; background:#fff0f3; border:none;"></button>
+            <button onclick="setCol('mint')" style="flex:1; height:35px; border-radius:10px; background:#e6fffa; border:none;"></button>
+            <button onclick="setCol('white')" style="flex:1; height:35px; border-radius:10px; background:white; border:1px solid #eee;"></button>
         </div>
         <button class="btn-add" onclick="add()">ADICIONAR</button>
     </div>
@@ -129,7 +151,7 @@
 
     let tasks = [];
     let daySettings = {};
-    let currentViewDate = new Date(2026, 1, 1); // Começa em Fev 2026
+    let currentViewDate = new Date(); 
     let selDate = "";
 
     db.ref('hub_raquel_v2026').on('value', snap => {
@@ -140,42 +162,37 @@
     });
 
     function render() {
-        const hr = new Date().getHours();
-        document.getElementById('greeting').innerText = hr < 12 ? "Bom dia!" : hr < 18 ? "Boa tarde!" : "Boa noite!";
-
         const done = tasks.filter(t => t.done).length;
         const pc = tasks.length > 0 ? Math.round((done / tasks.length) * 100) : 0;
         document.getElementById('p-bar').style.width = pc + "%";
-        document.getElementById('stats').innerText = `Você já concluiu ${pc}% das suas metas.`;
-        if(pc === 100 && tasks.length > 0) confetti({ particleCount: 100 });
+        document.getElementById('stats').innerText = `${pc}% do seu dia concluído!`;
+        if(pc === 100 && tasks.length > 0) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
         const container = document.getElementById('task-container');
         container.innerHTML = tasks.filter(t => !t.done).map(t => `
             <div class="task-card" onclick="toggle(${t.id})">
-                <div class="task-icon">✨</div>
+                <div class="task-icon">🗓️</div>
                 <div class="task-info">
                     <div class="task-title">${t.title}</div>
-                    <div class="task-meta">${t.date.split('-').reverse().join('/')}</div>
+                    <div class="task-meta">Prazo: ${t.date.split('-').reverse().join('/')}</div>
                 </div>
-                <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ff3b30; font-size:18px;">×</button>
-            </div>`).join('') || '<p style="text-align:center; color:#8e8e93; margin-top:20px; font-size:13px;">Tudo pronto por aqui! 🌿</p>';
+                <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ff3b30; font-size:20px;">×</button>
+            </div>`).join('') || '<p style="text-align:center; color:#8e8e93; margin-top:30px; font-size:13px;">Nenhuma tarefa pendente. 🌿</p>';
 
         renderCalendar();
     }
 
     function renderCalendar() {
         const grid = document.getElementById('calendar-grid');
-        const monthDisp = document.getElementById('month-display');
         grid.innerHTML = "";
-
         const month = currentViewDate.getMonth();
         const year = currentViewDate.getFullYear();
-        monthDisp.innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
+        document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
 
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div class="day empty"></div>`;
+        for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div class="day" style="border:none;"></div>`;
 
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -202,12 +219,15 @@
     }
 
     function setCol(c) { daySettings[selDate] = c; db.ref('hub_raquel_v2026').update({ daySettings }); }
+    
     function openM(d) { 
         selDate = `${currentViewDate.getFullYear()}-${String(currentViewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         document.getElementById('m-date-text').innerText = `Agendar ${d}/${currentViewDate.getMonth()+1}`;
         document.getElementById('modal').style.display="flex"; 
     }
+    
     function closeM() { document.getElementById('modal').style.display="none"; }
+    
     function add() {
         const v = document.getElementById('t-in').value;
         if(!v) return;
@@ -215,6 +235,7 @@
         db.ref('hub_raquel_v2026').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
+    
     function del(e, id) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_v2026').update({ tasks }); }
 </script>
 </body>
