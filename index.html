@@ -22,18 +22,13 @@
         :root {
             --bg: #f9f8ff;
             --white: #ffffff;
-            /* Cores das Categorias */
             --work: #ff7675; --gym: #8e7dff; --home: #55efc4; --study: #f9ca24;
-            /* Tons de Lilás Ajustados */
             --lilas-deep: #8e7dff;
-            --lilas-soft: #b2a4ff;
-            --lilas-accent: #9b59b6;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: #2d3436; }
 
-        /* HEADER COM LILÁS MAIS ENCORPADO */
         .header-widget { 
             padding: 55px 25px 30px; 
             background: linear-gradient(-45deg, #8e7dff, #9b59b6, #a29bfe, #8e7dff);
@@ -51,7 +46,6 @@
         }
 
         .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
-
         .user-name { font-family: 'Syne', sans-serif; font-size: 26px; color: white; font-weight: 700; letter-spacing: -0.5px; }
 
         .perf-compact {
@@ -67,9 +61,9 @@
             background: white; padding: 12px 25px; border-radius: 20px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.08);
             text-align: center; align-self: center; width: fit-content; max-width: 90%;
-            margin: 0 auto;
+            margin: 0 auto; min-height: 45px; display: flex; align-items: center;
         }
-        .motivation-text { font-size: 14px; font-weight: 600; color: #8e7dff; font-style: italic; }
+        .motivation-text { font-size: 14px; font-weight: 600; color: #8e7dff; font-style: italic; width: 100%; }
 
         .sync-btn {
             position: absolute; top: 15px; right: 25px;
@@ -96,7 +90,7 @@
 
         .task-list { padding: 0 20px 100px; flex: 1; overflow-y: auto; }
         .section-title { font-size: 11px; font-weight: 800; color: #8e7dff; margin: 30px 0 15px; text-transform: uppercase; letter-spacing: 2px; }
-        .task-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border-left: 7px solid #dfe6e9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .task-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border-left: 7px solid #dfe6e9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); cursor: pointer; }
         .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
         
         .icon-gym { background: #f3f0ff; color: #8e7dff; }
@@ -104,12 +98,12 @@
         .icon-home { background: #ebfaf6; color: #55efc4; }
         .icon-study { background: #fffdf0; color: #f9ca24; }
 
-        .fab-add { position: fixed; bottom: 35px; right: 35px; background: #8e7dff; color: white; width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 10px 20px rgba(142,125,255,0.4); display: none; z-index: 500; }
+        .fab-add { position: fixed; bottom: 35px; right: 35px; background: #8e7dff; color: white; width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 10px 20px rgba(142,125,255,0.4); display: none; z-index: 500; cursor: pointer; }
 
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 1000; }
         .modal-box { background: white; padding: 40px; border-radius: 40px; width: 92%; max-width: 420px; text-align: center; }
-        input { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #f1f2f6; margin-bottom: 20px; text-align: center; font-size: 16px; }
-        .btn-add-submit { background: #8e7dff; color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; font-size: 16px; }
+        input { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #f1f2f6; margin-bottom: 20px; text-align: center; font-size: 16px; font-family: inherit; }
+        .btn-add-submit { background: #8e7dff; color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; font-size: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -130,7 +124,7 @@
         </div>
     </div>
     <div class="motivation-container">
-        <div id="motivation" class="motivation-text">"A constância vence o talento."</div>
+        <div id="motivation" class="motivation-text">Carregando inspiração...</div>
     </div>
 </header>
 
@@ -159,14 +153,14 @@
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="m-date-text" style="color:#8e7dff;">Nova Tarefa</h3>
+        <h3 id="m-date-text" style="color:#8e7dff; font-family:'Syne';">Nova Tarefa</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
-            <div id="btn-gym" class="cat-btn selected" style="background:#f3f0ff; color:#8e7dff; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer;" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
-            <div id="btn-work" class="cat-btn" style="background:#fff0f0; color:#ff7675; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer;" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
-            <div id="btn-home" class="cat-btn" style="background:#ebfaf6; color:#55efc4; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer;" onclick="selectCat('home', '🏠 CASA')">CASA</div>
-            <div id="btn-study" class="cat-btn" style="background:#fffdf0; color:#f9ca24; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer;" onclick="selectCat('study', '📚 ESTUDOS')">ESTUDOS</div>
+            <div id="btn-gym" class="cat-btn selected" style="background:#f3f0ff; color:#8e7dff; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer; border: 2px solid #8e7dff;" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
+            <div id="btn-work" class="cat-btn" style="background:#fff0f0; color:#ff7675; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer; border: 2px solid transparent;" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
+            <div id="btn-home" class="cat-btn" style="background:#ebfaf6; color:#55efc4; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer; border: 2px solid transparent;" onclick="selectCat('home', '🏠 CASA')">CASA</div>
+            <div id="btn-study" class="cat-btn" style="background:#fffdf0; color:#f9ca24; padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer; border: 2px solid transparent;" onclick="selectCat('study', '📚 ESTUDOS')">ESTUDOS</div>
         </div>
-        <input type="text" id="t-in" placeholder="O que vamos fazer?">
+        <input type="text" id="t-in" placeholder="O que vamos fazer?" onkeydown="if(event.key==='Enter') add()">
         <button class="btn-add-submit" onclick="add()">ADICIONAR</button>
     </div>
 </div>
@@ -182,10 +176,25 @@
     let selCat = "gym";
     let selLabel = "💪 ACADEMIA";
 
+    const quotes = [
+        "Raquel, o sucesso é a soma de pequenos esforços.",
+        "A constância vence o talento.",
+        "Seja mais forte que sua melhor desculpa.",
+        "Educar a mente é treinar a emoção para ser feliz.",
+        "Pense antes de reagir.",
+        "Um passo de cada vez, Raquel."
+    ];
+
+    function updateQuote() {
+        const text = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById('motivation').innerText = `"${text}"`;
+    }
+
     db.ref('hub_raquel_v2026').on('value', snap => {
         tasks = (snap.val() || {}).tasks || [];
         render();
         calculatePerformance();
+        updateQuote(); // Garante que mude sempre que houver alteração nos dados
     });
 
     function toggleCal() {
@@ -210,8 +219,9 @@
         const pendingContainer = document.getElementById('pending-tasks');
         const completedContainer = document.getElementById('completed-tasks');
         const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
-        const pnt = filtered.filter(t => !t.done).map(t => createTaskHtml(t)).join('');
-        const cmt = filtered.filter(t => t.done).map(t => createTaskHtml(t)).join('');
+        const sorted = filtered.sort((a,b) => a.date.localeCompare(b.date));
+        const pnt = sorted.filter(t => !t.done).map(t => createTaskHtml(t)).join('');
+        const cmt = sorted.filter(t => t.done).map(t => createTaskHtml(t)).join('');
         pendingContainer.innerHTML = `<div class="section-title">Pendentes ${selDate ? 'do dia' : ''}</div>` + (pnt || '<p style="font-size:12px; color:#b2bec3;">Tudo pronto por aqui ✨</p>');
         completedContainer.innerHTML = cmt ? `<div class="section-title">Concluídas</div>` + cmt : '';
         renderCalendar();
@@ -246,12 +256,44 @@
 
     function filterDate(d) { selDate = d; document.getElementById('add-fab').style.display = d ? "flex" : "none"; render(); }
     function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
-    function openModal() { document.getElementById('modal').style.display="flex"; document.getElementById('m-date-text').innerText = selDate.split('-').reverse().join('/'); }
+    
+    function openModal() { 
+        document.getElementById('modal').style.display="flex"; 
+        document.getElementById('m-date-text').innerText = selDate.split('-').reverse().join('/'); 
+        setTimeout(() => document.getElementById('t-in').focus(), 100);
+    }
+    
     function closeM() { document.getElementById('modal').style.display="none"; }
-    function selectCat(c, l) { selCat = c; selLabel = l; document.querySelectorAll('.cat-btn').forEach(b => b.style.borderColor = 'transparent'); document.getElementById('btn-'+c).style.borderColor = '#8e7dff'; }
-    function add() { const v = document.getElementById('t-in').value; if(!v) return; tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel }); db.ref('hub_raquel_v2026').update({ tasks }); document.getElementById('t-in').value = ""; closeM(); }
-    function toggle(id) { const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; if(tasks[i].done) confetti({ particleCount: 60, spread: 70, colors: ['#8e7dff', '#ffffff'] }); db.ref('hub_raquel_v2026').update({ tasks }); }
-    function del(e, i) { e.stopPropagation(); if(confirm('Remover esta tarefa?')) { tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); } }
+    
+    function selectCat(c, l) { 
+        selCat = c; selLabel = l; 
+        document.querySelectorAll('.cat-btn').forEach(b => b.style.borderColor = 'transparent'); 
+        document.getElementById('btn-'+c).style.borderColor = '#8e7dff'; 
+    }
+    
+    function add() { 
+        const v = document.getElementById('t-in').value; 
+        if(!v) return; 
+        tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel }); 
+        db.ref('hub_raquel_v2026').update({ tasks }); 
+        document.getElementById('t-in').value = ""; 
+        closeM(); 
+    }
+    
+    function toggle(id) { 
+        const i = tasks.findIndex(t => t.id === id); 
+        tasks[i].done = !tasks[i].done; 
+        if(tasks[i].done) confetti({ particleCount: 60, spread: 70, colors: ['#8e7dff', '#ffffff'] }); 
+        db.ref('hub_raquel_v2026').update({ tasks }); 
+    }
+    
+    function del(e, i) { 
+        e.stopPropagation(); 
+        if(confirm('Remover esta tarefa?')) { 
+            tasks = tasks.filter(t => t.id !== i); 
+            db.ref('hub_raquel_v2026').update({ tasks }); 
+        } 
+    }
 </script>
 </body>
 </html>
