@@ -20,127 +20,98 @@
             --grad: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
             --bg: #f0f1f8;
             --white: #ffffff;
-            --work: #ff4757; 
-            --gym: #6c5ce7;  
-            --home: #2ed573;
-            --study: #f9ca24; /* Cor para Estudos */
+            --work: #ff4757; --gym: #6c5ce7; --home: #2ed573; --study: #f9ca24;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); 
-            margin: 0; display: flex; flex-direction: column; height: 100vh; color: #1c1c1e;
-            overflow: hidden;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
         .header-widget { 
-            padding: 50px 20px 20px; background: var(--grad);
-            border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2); 
-            z-index: 100; text-align: center; position: relative; flex-shrink: 0;
+            padding: 50px 20px 20px; background: var(--grad); border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
+            text-align: center; position: relative; flex-shrink: 0; color: white;
         }
-
-        .header-widget h1 { margin: 0; font-size: 22px; font-family: 'Syne'; color: white; cursor: pointer; }
 
         .motivation-banner {
             background: rgba(255, 255, 255, 0.15); margin: 12px 0 0; padding: 10px 15px;
-            border-radius: 15px; color: white; font-size: 13px; font-weight: 600;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); line-height: 1.4;
+            border-radius: 15px; font-size: 13px; font-weight: 600; backdrop-filter: blur(10px);
         }
 
-        .sync-btn {
-            position: absolute; top: 50px; right: 20px;
-            background: rgba(255,255,255,0.2); border: none; width: 35px; height: 35px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;
+        /* PAINEL DE DESEMPENHO */
+        .performance-panel {
+            background: white; margin: 15px 15px 5px; padding: 20px; border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
         }
+        .perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .perf-item { background: #f8f9fe; padding: 12px; border-radius: 15px; }
+        .perf-val { display: block; font-size: 20px; font-weight: 800; color: #6c5ce7; }
+        .perf-label { font-size: 10px; font-weight: 700; color: #8e8e93; text-transform: uppercase; }
 
         .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
-        .calendar-section { 
-            background: var(--white); margin: 10px 15px; border-radius: 25px;
-            padding: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); flex-shrink: 0;
-        }
-        .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 17px; margin: 0; color: #4834d4; text-transform: capitalize; }
+        /* CALENDÁRIO */
+        .calendar-section { background: white; margin: 10px 15px; padding: 18px; border-radius: 25px; flex-shrink: 0; }
+        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+        .day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
+        .day.has-task { background: #efeeff; color: #6c5ce7; }
+        .day.selected-day { border: 2px solid #6c5ce7; }
+        .day.today { background: var(--grad); color: white; }
 
-        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
-        .day { 
-            aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 800; font-size: 12px; border: 1px solid transparent; background: #ffffff; cursor: pointer; position: relative;
-        }
-        .day.has-task { background: #efeeff; border-color: #dcd9f8; color: #6c5ce7; }
-        .day.selected-day { border: 2px solid #6c5ce7 !important; }
-        .day.today { background: var(--grad) !important; color: white !important; border: none; }
-
-        .task-list { padding: 10px 20px; flex: 1; overflow-y: auto; position: relative; }
-        .section-title { font-size: 11px; font-weight: 800; color: #6c5ce7; margin: 15px 0 10px 5px; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; }
-        
-        .clear-filter { font-size: 9px; background: #efeeff; padding: 4px 8px; border-radius: 8px; cursor: pointer; }
-
-        .task-card { 
-            background: var(--white); border-radius: 20px; padding: 15px; margin-bottom: 10px; 
-            display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            border-left: 6px solid #ddd;
-        }
+        /* LISTA */
+        .task-list { padding: 0 20px 100px; flex: 1; overflow-y: auto; }
+        .section-title { font-size: 11px; font-weight: 800; color: #6c5ce7; margin: 20px 0 10px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .task-card { background: white; border-radius: 20px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border-left: 6px solid #ddd; }
         .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
-
-        .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
         
-        /* CORES CATEGORIAS */
-        .card-gym { border-left-color: var(--gym); }
-        .card-work { border-left-color: var(--work); }
-        .card-home { border-left-color: var(--home); }
-        .card-study { border-left-color: var(--study); }
-
         .icon-gym { background: #efeeff; color: var(--gym); }
         .icon-work { background: #fff0f3; color: var(--work); }
         .icon-home { background: #e6fffa; color: var(--home); }
         .icon-study { background: #fffbe6; color: var(--study); }
 
-        .fab-add {
-            position: fixed; bottom: 30px; right: 30px; 
-            background: var(--grad); color: white; width: 60px; height: 60px;
-            border-radius: 50%; border: none; font-size: 30px; font-weight: bold;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4); display: none;
-            align-items: center; justify-content: center; z-index: 500; cursor: pointer;
-        }
-
-        @media (min-width: 768px) {
-            .main-content { flex-direction: row; padding: 20px; gap: 20px; }
-            .calendar-section { width: 380px; margin: 0; }
-            .task-list { background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 30px; }
-        }
+        .fab-add { position: fixed; bottom: 30px; right: 30px; background: var(--grad); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 10px 20px rgba(108,92,231,0.4); display: none; z-index: 500; }
 
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 1000; }
-        .modal-box { background: var(--white); padding: 30px; border-radius: 35px; width: 95%; max-width: 400px; text-align: center; }
+        .modal-box { background: white; padding: 30px; border-radius: 35px; width: 90%; max-width: 400px; text-align: center; }
         .cat-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 20px 0; }
-        .cat-btn { padding: 12px 5px; border-radius: 12px; border: 2px solid transparent; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .cat-btn { padding: 12px 5px; border-radius: 12px; border: 2px solid transparent; font-size: 10px; font-weight: 800; }
         .cat-btn.selected { border-color: #1c1c1e; }
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0f1f8; margin-bottom: 20px; text-align: center; font-size: 16px; }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0f1f8; margin-bottom: 20px; text-align: center; }
         .btn-add-submit { background: var(--grad); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; }
     </style>
 </head>
 <body>
 
 <header class="header-widget">
-    <button class="sync-btn" onclick="location.reload()">🔄</button>
     <h1 onclick="filterDate('')">Agenda Raquel</h1>
-    <div id="motivation" class="motivation-banner">"Pense antes de reagir."</div>
-    <div style="width: 100%; background: rgba(255,255,255,0.3); height: 5px; border-radius: 10px; margin-top: 15px; overflow: hidden;">
-        <div id="p-bar" style="background: white; height: 100%; width: 0%; transition: 1s ease;"></div>
-    </div>
+    <div id="motivation" class="motivation-banner">"Carregando frases..."</div>
 </header>
 
 <div class="main-content">
-    <section class="calendar-section">
-        <div class="cal-header"><h3 id="month-display">Mês</h3></div>
-        <div id="cal-content">
-            <div style="display:flex; justify-content: space-between; margin-top: 15px;">
-                <button onclick="changeMonth(-1)" style="border:none; background:#f0f1f8; font-weight:bold; color:#6c5ce7; border-radius:10px; padding:8px 15px;">❮</button>
-                <button onclick="changeMonth(1)" style="border:none; background:#f0f1f8; font-weight:bold; color:#6c5ce7; border-radius:10px; padding:8px 15px;">❯</button>
+    <section class="performance-panel">
+        <h3 style="margin:0; font-family:'Syne'; font-size:15px; color:#1c1c1e;">Desempenho Semanal</h3>
+        <div class="perf-grid">
+            <div class="perf-item">
+                <span class="perf-label">Concluídas</span>
+                <span id="perf-done" class="perf-val">0</span>
             </div>
-            <div class="grid-cal" id="calendar-grid"></div>
+            <div class="perf-item">
+                <span class="perf-label">Atenção em</span>
+                <span id="perf-focus" class="perf-val" style="font-size:14px; color:#ff4757;">---</span>
+            </div>
         </div>
+        <div style="height:8px; background:#f0f1f8; border-radius:10px; margin-top:15px; overflow:hidden;">
+            <div id="perf-bar" style="height:100%; width:0%; background:var(--home); transition:1s;"></div>
+        </div>
+    </section>
+
+    <section class="calendar-section">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="month-display" style="margin:0; font-family:'Syne'; font-size:16px;">Mês</h3>
+            <div>
+                <button onclick="changeMonth(-1)" style="border:none; background:#f0f1f8; border-radius:8px; padding:5px 12px;">❮</button>
+                <button onclick="changeMonth(1)" style="border:none; background:#f0f1f8; border-radius:8px; padding:5px 12px;">❯</button>
+            </div>
+        </div>
+        <div class="grid-cal" id="calendar-grid"></div>
     </section>
 
     <main class="task-list">
@@ -153,24 +124,20 @@
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="m-date-text" style="font-family:'Syne'; color:#6c5ce7;">Agendar</h3>
+        <h3 id="m-date-text">Agendar</h3>
         <div class="cat-selector">
             <div id="btn-gym" class="cat-btn selected" style="background:#efeeff; color:var(--gym);" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
             <div id="btn-work" class="cat-btn" style="background:#fff0f3; color:var(--work);" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
             <div id="btn-home" class="cat-btn" style="background:#e6fffa; color:var(--home);" onclick="selectCat('home', '🏠 CASA')">CASA</div>
             <div id="btn-study" class="cat-btn" style="background:#fffbe6; color:var(--study);" onclick="selectCat('study', '📚 ESTUDOS')">ESTUDOS</div>
         </div>
-        <input type="text" id="t-in" placeholder="Descrição..." onkeydown="if(event.key === 'Enter') add()">
+        <input type="text" id="t-in" placeholder="Descrição...">
         <button class="btn-add-submit" onclick="add()">ADICIONAR</button>
     </div>
 </div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAXIOrHsZbHXvOIGTk0HS8NOwVBvpmwrOo",
-        databaseURL: "https://ue-joao-tavares-da-costa-default-rtdb.firebaseio.com",
-        projectId: "ue-joao-tavares-da-costa",
-    };
+    const firebaseConfig = { apiKey: "AIzaSyAXIOrHsZbHXvOIGTk0HS8NOwVBvpmwrOo", databaseURL: "https://ue-joao-tavares-da-costa-default-rtdb.firebaseio.com", projectId: "ue-joao-tavares-da-costa" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -180,73 +147,62 @@
     let selCat = "gym";
     let selLabel = "💪 ACADEMIA";
 
-    const quotes = [
-        "Raquel, o conhecimento é a única coisa que ninguém pode te tirar. - Augusto Cury",
-        "Estudar é o caminho para conquistar o que os outros acham impossível.",
-        "Raquel, sem sonhos, a vida não tem brilho. Foque nos seus estudos hoje!",
-    ];
-
     db.ref('hub_raquel_v2026').on('value', snap => {
-        const data = snap.val() || {};
-        tasks = data.tasks || [];
+        tasks = (snap.val() || {}).tasks || [];
         render();
-        updateMotivation();
+        calculatePerformance();
     });
 
-    function updateMotivation() {
-        const banner = document.getElementById('motivation');
-        const todayStr = new Date().toISOString().split('T')[0];
-        const todayTasks = tasks.filter(t => t.date === todayStr);
-        const studyPending = todayTasks.some(t => t.category === 'study' && !t.done);
+    function calculatePerformance() {
+        const today = new Date();
+        const lastWeek = new Date(); lastWeek.setDate(today.getDate() - 7);
         
-        if (studyPending) {
-            banner.innerHTML = "📚 <b>Hora de evoluir, Raquel!</b> Seus estudos de hoje são o sucesso de amanhã.";
-            banner.style.background = "rgba(249, 202, 36, 0.4)";
-        } else {
-            banner.innerText = quotes[Math.floor(Math.random() * quotes.length)];
-            banner.style.background = "rgba(255, 255, 255, 0.15)";
-        }
+        const weekTasks = tasks.filter(t => new Date(t.date) >= lastWeek);
+        const done = weekTasks.filter(t => t.done).length;
+        const total = weekTasks.length;
+        
+        document.getElementById('perf-done').innerText = done;
+        const pct = total > 0 ? (done / total) * 100 : 0;
+        document.getElementById('perf-bar').style.width = pct + "%";
+        document.getElementById('perf-bar').style.background = pct > 70 ? "#2ed573" : (pct > 40 ? "#f9ca24" : "#ff4757");
+
+        // Categoria com mais pendências
+        const pending = weekTasks.filter(t => !t.done);
+        const counts = pending.reduce((acc, t) => { acc[t.label] = (acc[t.label] || 0) + 1; return acc; }, {});
+        const max = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, "Nada!");
+        document.getElementById('perf-focus').innerText = total > 0 && pending.length > 0 ? max.split(' ')[1] : "Tudo em dia!";
     }
 
-    function filterDate(date) {
-        selDate = date;
-        document.getElementById('add-fab').style.display = date ? "flex" : "none";
-        render();
+    function updateMotivation() {
+        const quotes = ["Raquel, educar a mente é treinar a emoção para ser feliz. - Augusto Cury", "Não tenha medo do caminho, tenha medo de não caminhar.", "O sucesso é a soma de pequenos esforços repetidos dia após dia."];
+        document.getElementById('motivation').innerText = quotes[Math.floor(Math.random() * quotes.length)];
     }
 
     function render() {
-        const doneCount = tasks.filter(t => t.done).length;
-        document.getElementById('p-bar').style.width = (tasks.length > 0 ? (doneCount / tasks.length) * 100 : 0) + "%";
-
         const pendingContainer = document.getElementById('pending-tasks');
         const completedContainer = document.getElementById('completed-tasks');
-        
         const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
         const sorted = filtered.sort((a,b) => a.date.localeCompare(b.date));
 
         const pnt = sorted.filter(t => !t.done).map(t => createTaskHtml(t)).join('');
         const cmt = sorted.filter(t => t.done).map(t => createTaskHtml(t)).join('');
 
-        const filterLabel = selDate ? ` do dia ${selDate.split('-').reverse().join('/')} <span class="clear-filter" onclick="filterDate('')">Ver tudo</span>` : ' (Todas)';
-
-        pendingContainer.innerHTML = `<div class="section-title">Pendentes ${filterLabel}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93; margin-left:5px;">Nenhuma tarefa pendente ✨</p>');
+        pendingContainer.innerHTML = `<div class="section-title">Pendentes ${selDate ? 'do dia' : '(Ver Tudo)'}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93;">Nada por aqui ✨</p>');
         completedContainer.innerHTML = cmt ? `<div class="section-title">Concluídas</div>` + cmt : '';
-        
         renderCalendar();
+        updateMotivation();
     }
 
     function createTaskHtml(t) {
         const icon = t.category === 'study' ? '📚' : (t.category === 'work' ? '💼' : (t.category === 'home' ? '🏠' : '💪'));
-        return `
-            <div class="task-card card-${t.category || 'gym'} ${t.done ? 'is-done' : ''}" onclick="toggle(${t.id})">
-                <div class="task-icon icon-${t.category || 'gym'}">${t.done ? '✅' : icon}</div>
-                <div class="task-info">
-                    <div class="task-tag" style="color: var(--${t.category || 'gym'})">${t.label || 'ACADEMIA'}</div>
-                    <div style="font-weight: 700; font-size: 15px;">${t.title}</div>
-                    <div style="font-size:10px; color:#8e8e93; font-weight:600;">${t.date.split('-').reverse().join('/')}</div>
-                </div>
-                <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:20px; padding:10px;">×</button>
-            </div>`;
+        return `<div class="task-card card-${t.category || 'gym'} ${t.done ? 'is-done' : ''}" onclick="toggle(${t.id})">
+            <div class="task-icon icon-${t.category || 'gym'}">${t.done ? '✅' : icon}</div>
+            <div style="flex:1">
+                <div style="color:var(--${t.category || 'gym'}); font-size:9px; font-weight:800">${t.label}</div>
+                <div style="font-weight:700; font-size:14px">${t.title}</div>
+            </div>
+            <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:20px">×</button>
+        </div>`;
     }
 
     function renderCalendar() {
@@ -255,43 +211,22 @@
         document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
         const first = new Date(y, m, 1).getDay();
         const days = new Date(y, m + 1, 0).getDate();
-        for (let i = 0; i < first; i++) grid.innerHTML += `<div class="day" style="background:none; cursor:default;"></div>`;
+        for (let i = 0; i < first; i++) grid.innerHTML += `<div></div>`;
         for (let d = 1; d <= days; d++) {
             const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const isToday = new Date().toISOString().split('T')[0] === dateStr;
-            const hasP = tasks.some(t => t.date === dateStr);
-            const isSelected = selDate === dateStr;
-            grid.innerHTML += `<div class="day ${hasP ? 'has-task' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected-day' : ''}" onclick="filterDate('${dateStr}')">${d}</div>`;
+            const hasT = tasks.some(t => t.date === dateStr);
+            grid.innerHTML += `<div class="day ${hasT ? 'has-task' : ''} ${isToday ? 'today' : ''} ${selDate === dateStr ? 'selected-day' : ''}" onclick="filterDate('${dateStr}')">${d}</div>`;
         }
     }
 
-    function openModal() {
-        if(!selDate) return;
-        const d = selDate.split('-')[2];
-        document.getElementById('m-date-text').innerText = d + " de " + document.getElementById('month-display').innerText;
-        document.getElementById('modal').style.display="flex"; 
-        setTimeout(() => document.getElementById('t-in').focus(), 100);
-    }
-
-    function selectCat(cat, label) {
-        selCat = cat; selLabel = label;
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
-        document.getElementById('btn-' + cat).classList.add('selected');
-    }
-
+    function filterDate(d) { selDate = d; document.getElementById('add-fab').style.display = d ? "flex" : "none"; render(); }
     function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
-    function toggle(id) { 
-        const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; 
-        if(tasks[i].done) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-        db.ref('hub_raquel_v2026').update({ tasks }); 
-    }
+    function openModal() { document.getElementById('modal').style.display="flex"; document.getElementById('m-date-text').innerText = selDate.split('-').reverse().join('/'); }
     function closeM() { document.getElementById('modal').style.display="none"; }
-    function add() {
-        const v = document.getElementById('t-in').value; if(!v) return;
-        tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel });
-        db.ref('hub_raquel_v2026').update({ tasks });
-        document.getElementById('t-in').value = ""; closeM();
-    }
+    function selectCat(c, l) { selCat = c; selLabel = l; document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected')); document.getElementById('btn-'+c).classList.add('selected'); }
+    function add() { const v = document.getElementById('t-in').value; if(!v) return; tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel }); db.ref('hub_raquel_v2026').update({ tasks }); document.getElementById('t-in').value = ""; closeM(); }
+    function toggle(id) { const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; if(tasks[i].done) confetti({ particleCount: 50, spread: 60 }); db.ref('hub_raquel_v2026').update({ tasks }); }
     function del(e, i) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); }
 </script>
 </body>
