@@ -56,7 +56,7 @@
             .calendar-section { width: 420px; margin: 0 !important; }
             .task-list { background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); border-radius: 40px; padding: 30px !important; }
         }
-        .calendar-section { background: white; margin: 15px; padding: 22px; border-radius: 35px; flex-shrink: 0; }
+        .calendar-section { background: white; margin: 15px; padding: 22px; border-radius: 35px; flex-shrink: 0; transition: 0.3s; }
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
         .day { aspect-ratio: 1; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; cursor: pointer; color: #a29bfe; }
         .day.has-task { background: #f0eeff; color: var(--lilas); }
@@ -65,12 +65,10 @@
         .task-list { padding: 0 20px 100px; flex: 1; overflow-y: auto; }
         .section-title { font-size: 11px; font-weight: 800; color: var(--lilas); margin: 30px 0 15px; text-transform: uppercase; letter-spacing: 2px; }
         
-        /* ESTILO DOS CARDS COM CORES DINÂMICAS */
         .task-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border-left: 7px solid #dfe6e9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); cursor: pointer; }
         .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
         .task-icon { width:45px; height:45px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:20px; }
         
-        /* Cores de fundo dos ícones */
         .bg-work { background: #fff0f0; color: var(--work); }
         .bg-gym { background: #f3f0ff; color: var(--gym); }
         .bg-home { background: #ebfaf6; color: var(--home); }
@@ -82,6 +80,9 @@
         input { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #f1f2f6; margin-bottom: 20px; text-align: center; font-size: 16px; font-family: inherit; }
         .btn-add-submit { background: var(--lilas); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; font-size: 16px; cursor: pointer; }
         .cat-btn { padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer; border: 2px solid transparent; }
+        
+        /* Estilo da data quando recolhido */
+        #date-badge { font-size: 12px; background: #f3f0ff; color: var(--lilas); padding: 4px 12px; border-radius: 10px; font-weight: 800; display: none; }
     </style>
 </head>
 <body>
@@ -110,7 +111,10 @@
     <section class="calendar-section">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 id="month-display" style="margin:0; font-family:'Syne'; color:var(--lilas);">Mês</h3>
-            <button onclick="toggleCal()" style="background:none; border:none; color:var(--lilas); font-weight:800; font-size:10px; cursor:pointer;">RECOLHER</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="date-badge"></span>
+                <button id="toggle-btn" onclick="toggleCal()" style="background:none; border:none; color:var(--lilas); font-weight:800; font-size:10px; cursor:pointer;">RECOLHER</button>
+            </div>
         </div>
         <div id="cal-content">
             <div style="display:flex; justify-content: space-between; margin-top: 15px;">
@@ -145,9 +149,33 @@
     const db = firebase.database();
     let tasks = [], currentViewDate = new Date(), selDate = "", selCat = "gym", selLabel = "💪 ACADEMIA";
     const quotes = ["Raquel, o sucesso é a soma de pequenos esforços.", "A constância vence o talento.", "Seja mais forte que sua melhor desculpa.", "Educar a mente é treinar a emoção para ser feliz.", "Pense antes de reagir."];
+    
     function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
-    db.ref('hub_raquel_v2026').on('value', snap => { tasks = (snap.val() || {}).tasks || []; render(); calculatePerformance(); updateQuote(); });
-    function toggleCal() { const c = document.getElementById('cal-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
+    
+    db.ref('hub_raquel_v2026').on('value', snap => { 
+        tasks = (snap.val() || {}).tasks || []; 
+        render(); 
+        calculatePerformance(); 
+        updateQuote(); 
+    });
+
+    function toggleCal() { 
+        const c = document.getElementById('cal-content'); 
+        const badge = document.getElementById('date-badge');
+        const btn = document.getElementById('toggle-btn');
+        if(c.style.display === 'none') {
+            c.style.display = 'block';
+            badge.style.display = 'none';
+            btn.innerText = "RECOLHER";
+        } else {
+            c.style.display = 'none';
+            badge.style.display = 'inline-block';
+            const displayDate = selDate ? selDate.split('-').reverse().join('/') : "Geral";
+            badge.innerText = displayDate;
+            btn.innerText = "EXPANDIR";
+        }
+    }
+
     function calculatePerformance() {
         const weekTasks = tasks.filter(t => new Date(t.date) >= new Date(new Date().setDate(new Date().getDate() - 7)));
         document.getElementById('perf-done').innerText = weekTasks.filter(t => t.done).length;
@@ -157,13 +185,19 @@
             document.getElementById('perf-focus').innerText = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b).split(' ')[1];
         } else { document.getElementById('perf-focus').innerText = "OK!"; }
     }
+
     function render() {
         const pendingContainer = document.getElementById('pending-tasks'), completedContainer = document.getElementById('completed-tasks');
         const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
         pendingContainer.innerHTML = `<div class="section-title">Pendentes</div>` + (filtered.filter(t => !t.done).map(t => createTaskHtml(t)).join('') || '<p style="font-size:12px; color:#b2bec3;">Tudo pronto! ✨</p>');
         completedContainer.innerHTML = filtered.some(t => t.done) ? `<div class="section-title">Concluídas</div>` + filtered.filter(t => t.done).map(t => createTaskHtml(t)).join('') : '';
         renderCalendar();
+        // Atualiza o badge se estiver recolhido
+        if(document.getElementById('cal-content').style.display === 'none') {
+            document.getElementById('date-badge').innerText = selDate ? selDate.split('-').reverse().join('/') : "Geral";
+        }
     }
+
     function createTaskHtml(t) {
         const icons = { study: '📚', work: '💼', home: '🏠', gym: '💪' };
         const catColor = `var(--${t.category || 'gym'})`;
@@ -176,6 +210,7 @@
             <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#dfe6e9; font-size:24px;">×</button>
         </div>`;
     }
+
     function renderCalendar() {
         const grid = document.getElementById('calendar-grid'); grid.innerHTML = "";
         const m = currentViewDate.getMonth(), y = currentViewDate.getFullYear();
@@ -188,6 +223,7 @@
             grid.innerHTML += `<div class="day ${tasks.some(t => t.date === dateStr) ? 'has-task' : ''} ${isToday ? 'today' : ''} ${selDate === dateStr ? 'selected-day' : ''}" onclick="filterDate('${dateStr}')">${d}</div>`;
         }
     }
+
     function filterDate(d) { selDate = d; document.getElementById('add-fab').style.display = d ? "flex" : "none"; render(); }
     function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
     function openModal() { document.getElementById('modal').style.display="flex"; setTimeout(() => document.getElementById('t-in').focus(), 100); }
