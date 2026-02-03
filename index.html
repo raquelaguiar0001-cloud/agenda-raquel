@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <title>Agenda Raquel</title>
-
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,23 +33,37 @@
             text-align: center; position: relative; flex-shrink: 0; color: white;
         }
 
+        .sync-btn {
+            position: absolute; top: 50px; right: 20px;
+            background: rgba(255,255,255,0.2); border: none; width: 35px; height: 35px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer;
+        }
+
         .motivation-banner {
             background: rgba(255, 255, 255, 0.15); margin: 12px 0 0; padding: 10px 15px;
             border-radius: 15px; font-size: 13px; font-weight: 600; backdrop-filter: blur(10px);
         }
 
         .performance-panel {
-            background: white; margin: 15px 15px 5px; padding: 20px; border-radius: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            background: white; margin: 15px; padding: 20px; border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); flex-shrink: 0;
         }
         .perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
         .perf-item { background: #f8f9fe; padding: 12px; border-radius: 15px; }
-        .perf-val { display: block; font-size: 20px; font-weight: 800; color: #6c5ce7; }
+        .perf-val { display: block; font-size: 18px; font-weight: 800; color: #6c5ce7; }
         .perf-label { font-size: 10px; font-weight: 700; color: #8e8e93; text-transform: uppercase; }
 
         .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
-        .calendar-section { background: white; margin: 10px 15px; padding: 18px; border-radius: 25px; flex-shrink: 0; transition: all 0.3s ease; }
+        /* LAYOUT TABLET/NOTEBOOK */
+        @media (min-width: 768px) {
+            .main-content { flex-direction: row-reverse; padding: 20px; gap: 20px; }
+            .calendar-section { width: 380px; margin: 0 !important; height: fit-content; }
+            .task-list { background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 30px; padding: 20px !important; }
+            .performance-panel { margin: 0 0 20px 0; }
+        }
+
+        .calendar-section { background: white; margin: 0 15px 10px; padding: 18px; border-radius: 25px; flex-shrink: 0; transition: all 0.3s ease; }
         .calendar-section.minimized #cal-content { display: none; }
         
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
@@ -85,28 +98,12 @@
 <body>
 
 <header class="header-widget">
+    <button class="sync-btn" onclick="location.reload()">🔄</button>
     <h1 onclick="filterDate('')">Agenda Raquel</h1>
     <div id="motivation" class="motivation-banner">"Carregando frases..."</div>
 </header>
 
 <div class="main-content">
-    <section class="performance-panel">
-        <h3 style="margin:0; font-family:'Syne'; font-size:15px; color:#1c1c1e;">Desempenho Semanal</h3>
-        <div class="perf-grid">
-            <div class="perf-item">
-                <span class="perf-label">Concluídas</span>
-                <span id="perf-done" class="perf-val">0</span>
-            </div>
-            <div class="perf-item">
-                <span class="perf-label">Atenção em</span>
-                <span id="perf-focus" class="perf-val" style="font-size:14px; color:#ff4757;">---</span>
-            </div>
-        </div>
-        <div style="height:8px; background:#f0f1f8; border-radius:10px; margin-top:15px; overflow:hidden;">
-            <div id="perf-bar" style="height:100%; width:0%; background:var(--home); transition:1s;"></div>
-        </div>
-    </section>
-
     <section class="calendar-section" id="cal-sec">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 id="month-display" style="margin:0; font-family:'Syne'; font-size:16px;">Mês</h3>
@@ -122,6 +119,23 @@
     </section>
 
     <main class="task-list">
+        <section class="performance-panel">
+            <h3 style="margin:0; font-family:'Syne'; font-size:15px; color:#1c1c1e;">Desempenho Semanal</h3>
+            <div class="perf-grid">
+                <div class="perf-item">
+                    <span class="perf-label">Concluídas</span>
+                    <span id="perf-done" class="perf-val">0</span>
+                </div>
+                <div class="perf-item">
+                    <span class="perf-label">Atenção em</span>
+                    <span id="perf-focus" class="perf-val" style="font-size:12px; color:#ff4757;">---</span>
+                </div>
+            </div>
+            <div style="height:8px; background:#f0f1f8; border-radius:10px; margin-top:15px; overflow:hidden;">
+                <div id="perf-bar" style="height:100%; width:0%; background:var(--home); transition:1s;"></div>
+            </div>
+        </section>
+
         <div id="pending-tasks"></div>
         <div id="completed-tasks"></div>
     </main>
