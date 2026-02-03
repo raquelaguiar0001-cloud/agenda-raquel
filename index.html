@@ -20,23 +20,27 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Syne:wght@700&display=swap');
 
         :root {
-            --bg: #f8f9fd;
+            --bg: #fdfcff; /* Fundo levemente lilás */
             --white: #ffffff;
-            --work: #ff7675; --gym: #a29bfe; --home: #55efc4; --study: #f9ca24;
+            --work: #ff8e8e; --gym: #a29bfe; --home: #74ebd5; --study: #ffdb58;
+            /* Paleta Lilás Suave */
+            --lilas-light: #dcd6f7;
+            --lilas-mid: #a29bfe;
+            --purple-soft: #c3bef0;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: #2d3436; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: #4a4e69; }
 
-        /* HEADER COM DEGRADÊ ANIMADO */
+        /* HEADER COM DEGRADÊ LILÁS ANIMADO (SEM TONS ESCUROS) */
         .header-widget { 
             padding: 55px 25px 30px; 
-            background: linear-gradient(-45deg, #6c5ce7, #4834d4, #2d3436, #6c5ce7);
+            background: linear-gradient(-45deg, #a29bfe, #c3bef0, #dcd6f7, #b8b5ff);
             background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            animation: gradientBG 12s ease infinite;
             border-bottom-left-radius: 45px; border-bottom-right-radius: 45px;
             display: flex; flex-direction: column; gap: 20px; position: relative; flex-shrink: 0;
-            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.3);
+            box-shadow: 0 15px 30px rgba(162, 155, 254, 0.2);
         }
 
         @keyframes gradientBG {
@@ -47,74 +51,70 @@
 
         .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
 
-        .user-name { font-family: 'Syne', sans-serif; font-size: 26px; color: white; font-weight: 700; letter-spacing: -1px; }
+        .user-name { font-family: 'Syne', sans-serif; font-size: 26px; color: white; font-weight: 700; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
         .perf-compact {
-            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(15px);
-            padding: 12px 18px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(15px);
+            padding: 12px 18px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.4);
             display: flex; gap: 18px; text-align: left;
         }
         .perf-mini-item { display: flex; flex-direction: column; }
-        .perf-mini-label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
-        .perf-mini-val { font-size: 15px; font-weight: 800; color: white; }
+        .perf-mini-label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #5e548e; letter-spacing: 0.5px; }
+        .perf-mini-val { font-size: 15px; font-weight: 800; color: #4a4e69; }
 
         .motivation-container {
-            background: rgba(0, 0, 0, 0.2); padding: 14px 25px; border-radius: 22px;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.4); padding: 14px 25px; border-radius: 22px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5);
             text-align: center; align-self: center; width: fit-content; max-width: 90%;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1); margin: 0 auto;
+            box-shadow: 0 8px 20px rgba(162, 155, 254, 0.1); margin: 0 auto;
         }
-        .motivation-text { font-size: 14px; font-weight: 600; color: #fff; font-style: italic; opacity: 0.95; }
+        .motivation-text { font-size: 14px; font-weight: 600; color: #5e548e; font-style: italic; }
 
-        /* BOTÃO DE REFRESH POSICIONADO PARA NÃO SUMIR */
         .sync-btn {
             position: absolute; top: 15px; right: 25px;
-            background: rgba(255,255,255,0.2); border: none; width: 35px; height: 35px;
-            border-radius: 50%; color: white; cursor: pointer; font-size: 16px;
+            background: rgba(255,255,255,0.4); border: none; width: 35px; height: 35px;
+            border-radius: 50%; color: #5e548e; cursor: pointer; font-size: 16px;
             display: flex; align-items: center; justify-content: center; z-index: 10;
         }
 
         .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; }
 
-        /* AJUSTE PARA TABLET E COMPUTADOR */
         @media (min-width: 768px) {
             .main-content { flex-direction: row-reverse; padding: 25px; gap: 30px; }
             .calendar-section { width: 420px; margin: 0 !important; height: fit-content; padding: 30px; }
-            .task-list { background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); border-radius: 40px; padding: 30px !important; }
+            .task-list { background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); border-radius: 40px; padding: 30px !important; }
             .user-name { font-size: 32px; }
             .perf-compact { padding: 15px 25px; gap: 30px; }
             .header-widget { padding: 60px 50px 40px; }
         }
 
-        .calendar-section { background: white; margin: 15px; padding: 22px; border-radius: 35px; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .calendar-section { background: white; margin: 15px; padding: 22px; border-radius: 35px; flex-shrink: 0; box-shadow: 0 10px 30px rgba(162,155,254,0.05); }
         .calendar-section.minimized #cal-content { display: none; }
         
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
-        .day { aspect-ratio: 1; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.3s; }
-        .day.has-task { background: #f3f0ff; color: #6c5ce7; }
-        .day.selected-day { border: 2.5px solid #6c5ce7; transform: scale(1.05); }
-        .day.today { background: #6c5ce7; color: white; box-shadow: 0 5px 15px rgba(108,92,231,0.3); }
+        .day { aspect-ratio: 1; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.3s; color: #9a8c98; }
+        .day.has-task { background: #f0eeff; color: #a29bfe; }
+        .day.selected-day { border: 2.5px solid #a29bfe; transform: scale(1.05); color: #a29bfe; }
+        .day.today { background: #a29bfe; color: white; box-shadow: 0 5px 15px rgba(162,155,254,0.3); }
 
         .task-list { padding: 0 20px 100px; flex: 1; overflow-y: auto; }
-        .section-title { font-size: 11px; font-weight: 800; color: #6c5ce7; margin: 30px 0 15px; text-transform: uppercase; letter-spacing: 2px; }
+        .section-title { font-size: 11px; font-weight: 800; color: #a29bfe; margin: 30px 0 15px; text-transform: uppercase; letter-spacing: 2px; }
         .task-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border-left: 7px solid #dfe6e9; box-shadow: 0 5px 20px rgba(0,0,0,0.02); transition: 0.3s; }
-        .task-card:active { transform: scale(0.98); }
         .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
         
-        .icon-gym { background: #f3f0ff; color: #6c5ce7; }
-        .icon-work { background: #fff0f0; color: #ff7675; }
-        .icon-home { background: #ebfaf6; color: #55efc4; }
+        .icon-gym { background: #f3f0ff; color: #a29bfe; }
+        .icon-work { background: #fff0f0; color: #ff8e8e; }
+        .icon-home { background: #ebfaf6; color: #74ebd5; }
         .icon-study { background: #fffdf0; color: #f9ca24; }
 
-        .fab-add { position: fixed; bottom: 35px; right: 35px; background: #6c5ce7; color: white; width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 12px 25px rgba(108,92,231,0.4); display: none; z-index: 500; cursor: pointer; }
+        .fab-add { position: fixed; bottom: 35px; right: 35px; background: #a29bfe; color: white; width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 12px 25px rgba(162,155,254,0.4); display: none; z-index: 500; cursor: pointer; }
 
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 1000; }
-        .modal-box { background: white; padding: 40px; border-radius: 45px; width: 92%; max-width: 420px; text-align: center; }
-        .cat-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 25px 0; }
+        #modal { position: fixed; inset: 0; background: rgba(162,155,254,0.15); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 1000; }
+        .modal-box { background: white; padding: 40px; border-radius: 45px; width: 92%; max-width: 420px; text-align: center; box-shadow: 0 20px 50px rgba(162,155,254,0.1); }
         .cat-btn { padding: 18px; border-radius: 20px; border: 2px solid transparent; font-size: 11px; font-weight: 800; cursor: pointer; }
-        .cat-btn.selected { border-color: #6c5ce7; background: #f3f0ff; }
+        .cat-btn.selected { border-color: #a29bfe; background: #f3f0ff; }
         input { width: 100%; padding: 20px; border-radius: 20px; border: 2px solid #f1f2f6; margin-bottom: 25px; text-align: center; font-size: 16px; font-family: inherit; }
-        .btn-add-submit { background: #6c5ce7; color: white; border: none; padding: 20px; border-radius: 20px; width: 100%; font-weight: 800; font-size: 16px; box-shadow: 0 10px 20px rgba(108,92,231,0.2); }
+        .btn-add-submit { background: #a29bfe; color: white; border: none; padding: 20px; border-radius: 20px; width: 100%; font-weight: 800; font-size: 16px; box-shadow: 0 10px 20px rgba(162,155,254,0.2); }
     </style>
 </head>
 <body>
@@ -131,8 +131,8 @@
                 <span id="perf-done" class="perf-mini-val">0</span>
             </div>
             <div class="perf-mini-item">
-                <span class="perf-mini-label">Focar em</span>
-                <span id="perf-focus" class="perf-mini-val" style="color:#fab1a0;">...</span>
+                <span class="perf-mini-label">Focar</span>
+                <span id="perf-focus" class="perf-mini-val" style="color:#a29bfe;">...</span>
             </div>
         </div>
     </div>
@@ -145,13 +145,13 @@
 <div class="main-content">
     <section class="calendar-section" id="cal-sec">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 id="month-display" style="margin:0; font-family:'Syne'; font-size:18px; color:#6c5ce7;">Mês</h3>
-            <button class="toggle-btn" id="t-btn" onclick="toggleCal()">RECOLHER</button>
+            <h3 id="month-display" style="margin:0; font-family:'Syne'; font-size:18px; color:#a29bfe;">Mês</h3>
+            <button class="toggle-btn" id="t-btn" onclick="toggleCal()" style="background:none; border:none; color:#a29bfe; font-weight:800; font-size:10px; cursor:pointer;">RECOLHER</button>
         </div>
         <div id="cal-content">
             <div style="display:flex; justify-content: space-between; margin-top: 18px;">
-                <button onclick="changeMonth(-1)" style="border:none; background:#f8f9fd; border-radius:12px; padding:10px 18px; color:#6c5ce7; font-weight:bold;">❮</button>
-                <button onclick="changeMonth(1)" style="border:none; background:#f8f9fd; border-radius:12px; padding:10px 18px; color:#6c5ce7; font-weight:bold;">❯</button>
+                <button onclick="changeMonth(-1)" style="border:none; background:#f8f9fd; border-radius:12px; padding:10px 18px; color:#a29bfe; font-weight:bold;">❮</button>
+                <button onclick="changeMonth(1)" style="border:none; background:#f8f9fd; border-radius:12px; padding:10px 18px; color:#a29bfe; font-weight:bold;">❯</button>
             </div>
             <div class="grid-cal" id="calendar-grid"></div>
         </div>
@@ -167,11 +167,11 @@
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="m-date-text" style="color:#6c5ce7; font-family:'Syne';">Nova Tarefa</h3>
-        <div class="cat-selector">
-            <div id="btn-gym" class="cat-btn selected" style="background:#f3f0ff; color:#6c5ce7;" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
-            <div id="btn-work" class="cat-btn" style="background:#fff0f0; color:#ff7675;" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
-            <div id="btn-home" class="cat-btn" style="background:#ebfaf6; color:#55efc4;" onclick="selectCat('home', '🏠 CASA')">CASA</div>
+        <h3 id="m-date-text" style="color:#a29bfe; font-family:'Syne';">Nova Tarefa</h3>
+        <div class="cat-selector" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 25px 0;">
+            <div id="btn-gym" class="cat-btn selected" style="background:#f3f0ff; color:#a29bfe;" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
+            <div id="btn-work" class="cat-btn" style="background:#fff0f0; color:#ff8e8e;" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
+            <div id="btn-home" class="cat-btn" style="background:#ebfaf6; color:#74ebd5;" onclick="selectCat('home', '🏠 CASA')">CASA</div>
             <div id="btn-study" class="cat-btn" style="background:#fffdf0; color:#f9ca24;" onclick="selectCat('study', '📚 ESTUDOS')">ESTUDOS</div>
         </div>
         <input type="text" id="t-in" placeholder="O que vamos fazer?">
@@ -268,7 +268,7 @@
     function closeM() { document.getElementById('modal').style.display="none"; }
     function selectCat(c, l) { selCat = c; selLabel = l; document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected')); document.getElementById('btn-'+c).classList.add('selected'); }
     function add() { const v = document.getElementById('t-in').value; if(!v) return; tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel }); db.ref('hub_raquel_v2026').update({ tasks }); document.getElementById('t-in').value = ""; closeM(); }
-    function toggle(id) { const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; if(tasks[i].done) confetti({ particleCount: 60, spread: 70, colors: ['#6c5ce7', '#a29bfe', '#ffffff'] }); db.ref('hub_raquel_v2026').update({ tasks }); }
+    function toggle(id) { const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; if(tasks[i].done) confetti({ particleCount: 60, spread: 70, colors: ['#a29bfe', '#c3bef0', '#ffffff'] }); db.ref('hub_raquel_v2026').update({ tasks }); }
     function del(e, i) { e.stopPropagation(); if(confirm('Remover esta tarefa?')) { tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); } }
 </script>
 </body>
