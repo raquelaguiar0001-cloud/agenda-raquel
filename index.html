@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <title>Raquel Aguiar</title>
-    <meta name="apple-mobile-web-app-title" content="Raquel Aguiar">
+    <title>Agenda Raquel</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/144/calendar.png">
-    <link rel="icon" href="https://img.icons8.com/fluency/144/calendar.png">
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
@@ -21,8 +18,11 @@
 
         :root {
             --grad: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-            --bg: #f2f2f7;
+            --bg: #f8f9fc;
             --white: #ffffff;
+            --work: #ff4757; 
+            --gym: #6c5ce7;  
+            --home: #2ed573; 
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -30,10 +30,8 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); 
             margin: 0; display: flex; flex-direction: column; height: 100vh; color: #1c1c1e;
-            overscroll-behavior-y: contain;
         }
 
-        /* HEADER FIXO */
         .header-widget { 
             padding: 60px 20px 20px; background: var(--white);
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
@@ -47,52 +45,63 @@
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
         }
 
-        /* CALENDÁRIO MINIMIZÁVEL NO TOPO */
+        /* CALENDÁRIO */
         .calendar-section { 
             background: var(--white); margin: 10px 15px; border-radius: 25px;
             padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden; max-height: 500px;
+            transition: all 0.4s ease; overflow: hidden; max-height: 500px;
         }
-        .calendar-section.minimized { max-height: 60px; padding-bottom: 0; }
-
+        .calendar-section.minimized { max-height: 55px; }
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; cursor: pointer; }
-        .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 16px; margin: 0; text-transform: capitalize; }
-        
-        .toggle-btn { background: #efeeff; border: none; color: #6c5ce7; padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 11px; }
+        .cal-header h3 { font-family: 'Syne', sans-serif; font-size: 16px; margin: 0; text-transform: capitalize; color: #6c5ce7; }
+        .toggle-btn { background: #efeeff; border: none; color: #6c5ce7; padding: 6px 12px; border-radius: 10px; font-weight: 800; font-size: 10px; }
 
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; border: 1px solid #f2f2f7; position: relative; }
-        .day.today { border: 2px solid #6c5ce7; color: #6c5ce7; }
-        .day.has-task::after { content: ''; position: absolute; bottom: 3px; width: 3px; height: 3px; background: #6c5ce7; border-radius: 50%; }
+        .day.today { border: 2px solid #6c5ce7; background: #f8f7ff; }
 
-        /* LISTA DE TAREFAS (OCUPA O RESTO DA TELA) */
+        /* LISTA DE TAREFAS */
         .task-list { padding: 10px 20px; flex: 1; overflow-y: auto; }
+        .section-title { font-size: 12px; font-weight: 800; color: #8e8e93; margin: 15px 0 10px 5px; text-transform: uppercase; letter-spacing: 1px; }
+
         .task-card { 
             background: var(--white); border-radius: 20px; padding: 16px; margin-bottom: 12px;
             display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border-left: 6px solid #ddd; transition: 0.3s;
         }
-        .task-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #f2f2f7; font-size: 18px; }
-        .task-info { flex: 1; }
-        .task-title { font-weight: 700; font-size: 14px; }
         
-        /* CORES */
-        .bg-lavender { background: #efeeff !important; border:none; } 
-        .bg-rose { background: #fff0f3 !important; border:none; } 
-        .bg-mint { background: #e6fffa !important; border:none; }
+        /* Estilo para tarefas cumpridas */
+        .task-card.is-done { opacity: 0.5; filter: grayscale(0.5); border-left-color: #ccc !important; }
+        .task-card.is-done .task-title { text-decoration: line-through; color: #8e8e93; }
+
+        .card-gym { border-left-color: var(--gym); }
+        .card-work { border-left-color: var(--work); }
+        .card-home { border-left-color: var(--home); }
+
+        .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .icon-gym { background: #efeeff; color: var(--gym); }
+        .icon-work { background: #fff0f3; color: var(--work); }
+        .icon-home { background: #e6fffa; color: var(--home); }
+
+        .task-info { flex: 1; }
+        .task-title { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+        .task-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.7; }
 
         /* MODAL */
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 1000; padding: 20px; }
         .modal-box { background: var(--white); padding: 30px; border-radius: 30px; width: 100%; max-width: 350px; text-align: center; }
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin: 20px 0; text-align: center; }
-        .btn-add { background: var(--grad); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: 800; }
+        .cat-selector { display: flex; gap: 8px; margin: 15px 0; }
+        .cat-btn { flex: 1; padding: 10px 5px; border-radius: 12px; border: 2px solid transparent; font-size: 10px; font-weight: 800; }
+        .cat-btn.selected { border-color: #1c1c1e; transform: scale(1.05); }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 20px; text-align: center; font-size: 16px; }
+        .btn-add { background: var(--grad); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; }
     </style>
 </head>
 <body>
 
 <header class="header-widget">
     <button class="sync-btn" onclick="location.reload()">🔄</button>
-    <h1 style="margin:0; font-size: 18px; font-family: 'Syne';">Raquel Aguiar</h1>
+    <h1 style="margin:0; font-size: 18px; font-family: 'Syne';">Agenda Raquel</h1>
     <div style="width: 100%; background: #e5e5ea; height: 4px; border-radius: 10px; margin-top: 15px; overflow: hidden;">
         <div id="p-bar" style="background: var(--grad); height: 100%; width: 0%; transition: 1s ease;"></div>
     </div>
@@ -105,25 +114,28 @@
     </div>
     <div id="cal-content">
         <div class="cal-nav" style="display:flex; justify-content: space-between; margin-bottom: 10px;">
-            <button onclick="changeMonth(-1)" style="border:none; background:none; font-weight:bold; color:#6c5ce7;">❮</button>
-            <button onclick="changeMonth(1)" style="border:none; background:none; font-weight:bold; color:#6c5ce7;">❯</button>
+            <button onclick="changeMonth(-1)" style="border:none; background:none; font-weight:bold; color:#6c5ce7; padding:10px;">❮</button>
+            <button onclick="changeMonth(1)" style="border:none; background:none; font-weight:bold; color:#6c5ce7; padding:10px;">❯</button>
         </div>
         <div class="grid-cal" id="calendar-grid"></div>
     </div>
 </section>
 
-<main class="task-list" id="task-container"></main>
+<main class="task-list">
+    <div id="pending-tasks"></div>
+    <div id="completed-tasks"></div>
+</main>
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="m-date-text">Agendar</h3>
-        <input type="text" id="t-in" placeholder="O que vamos fazer?">
-        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <button onclick="setCol('lavender')" style="flex:1; height:35px; border-radius:10px; background:#efeeff; border:none;"></button>
-            <button onclick="setCol('rose')" style="flex:1; height:35px; border-radius:10px; background:#fff0f3; border:none;"></button>
-            <button onclick="setCol('mint')" style="flex:1; height:35px; border-radius:10px; background:#e6fffa; border:none;"></button>
+        <h3 id="m-date-text" style="font-family:'Syne';">Agendar</h3>
+        <div class="cat-selector">
+            <div id="btn-gym" class="cat-btn selected" style="background:#efeeff; color:var(--gym);" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
+            <div id="btn-work" class="cat-btn" style="background:#fff0f3; color:var(--work);" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
+            <div id="btn-home" class="cat-btn" style="background:#e6fffa; color:var(--home);" onclick="selectCat('home', '🏠 CASA')">CASA</div>
         </div>
-        <button class="btn-add" onclick="add()">SALVAR</button>
+        <input type="text" id="t-in" placeholder="Descrição da tarefa...">
+        <button class="btn-add" onclick="add()">ADICIONAR À LISTA</button>
     </div>
 </div>
 
@@ -137,47 +149,70 @@
     const db = firebase.database();
 
     let tasks = [];
-    let daySettings = {};
     let currentViewDate = new Date(); 
     let selDate = "";
+    let selCat = "gym";
+    let selLabel = "💪 ACADEMIA";
 
     db.ref('hub_raquel_v2026').on('value', snap => {
         const data = snap.val() || {};
         tasks = data.tasks || [];
-        daySettings = data.daySettings || {};
         render();
     });
 
+    function selectCat(cat, label) {
+        selCat = cat; selLabel = label;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('btn-' + cat).classList.add('selected');
+    }
+
     function toggleCal() {
         const sec = document.getElementById('cal-sec');
-        const btn = document.getElementById('t-btn');
         sec.classList.toggle('minimized');
-        btn.innerText = sec.classList.contains('minimized') ? "EXPANDIR" : "RECOLHER";
+        document.getElementById('t-btn').innerText = sec.classList.contains('minimized') ? "EXPANDIR" : "RECOLHER";
     }
 
     function render() {
-        const done = tasks.filter(t => t.done).length;
-        const pc = tasks.length > 0 ? Math.round((done / tasks.length) * 100) : 0;
+        const doneCount = tasks.filter(t => t.done).length;
+        const pc = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
         document.getElementById('p-bar').style.width = pc + "%";
 
-        const container = document.getElementById('task-container');
-        container.innerHTML = tasks.filter(t => !t.done).map(t => `
-            <div class="task-card" onclick="toggle(${t.id})">
-                <div class="task-icon">🗓️</div>
-                <div class="task-info">
-                    <div class="task-title">${t.title}</div>
-                    <div style="font-size:10px; color:#8e8e93;">${t.date.split('-').reverse().join('/')}</div>
-                </div>
-                <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ff3b30; font-size:20px;">×</button>
-            </div>`).join('') || '<p style="text-align:center; color:#8e8e93; font-size:13px; margin-top:20px;">Foco total! ✨</p>';
+        const pendingContainer = document.getElementById('pending-tasks');
+        const completedContainer = document.getElementById('completed-tasks');
+        
+        const sortedTasks = [...tasks].sort((a,b) => a.date.localeCompare(b.date));
+
+        const pendingHtml = sortedTasks.filter(t => !t.done).map(t => createTaskHtml(t)).join('');
+        const completedHtml = sortedTasks.filter(t => t.done).map(t => createTaskHtml(t)).join('');
+
+        pendingContainer.innerHTML = pendingHtml ? `<div class="section-title">Pendentes</div>` + pendingHtml : '';
+        completedContainer.innerHTML = completedHtml ? `<div class="section-title">Concluídas</div>` + completedHtml : '';
+
+        if (!pendingHtml && !completedHtml) {
+            pendingContainer.innerHTML = '<p style="text-align:center; color:#8e8e93; font-size:13px; margin-top:40px;">Nenhuma tarefa encontrada ✨</p>';
+        }
+
         renderCalendar();
     }
 
+    function createTaskHtml(t) {
+        return `
+            <div class="task-card card-${t.category || 'gym'} ${t.done ? 'is-done' : ''}" onclick="toggle(${t.id})">
+                <div class="task-icon icon-${t.category || 'gym'}">
+                    ${t.done ? '✅' : (t.category === 'work' ? '💼' : (t.category === 'home' ? '🏠' : '💪'))}
+                </div>
+                <div class="task-info">
+                    <div class="task-tag" style="color: var(--${t.category || 'gym'})">${t.label || 'ACADEMIA'}</div>
+                    <div class="task-title">${t.title}</div>
+                    <div style="font-size:10px; color:#8e8e93;">${t.date.split('-').reverse().join('/')}</div>
+                </div>
+                <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:20px; padding:10px;">×</button>
+            </div>`;
+    }
+
     function renderCalendar() {
-        const grid = document.getElementById('calendar-grid');
-        grid.innerHTML = "";
-        const month = currentViewDate.getMonth();
-        const year = currentViewDate.getFullYear();
+        const grid = document.getElementById('calendar-grid'); grid.innerHTML = "";
+        const month = currentViewDate.getMonth(); const year = currentViewDate.getFullYear();
         document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -185,22 +220,30 @@
         for (let d = 1; d <= daysInMonth; d++) {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const isToday = new Date().toISOString().split('T')[0] === dateStr;
-            grid.innerHTML += `<div class="day bg-${daySettings[dateStr] || 'white'} ${isToday ? 'today' : ''} ${tasks.some(t => t.date === dateStr) ? 'has-task' : ''}" onclick="openM(${d})">${d}</div>`;
+            const hasPending = tasks.some(t => t.date === dateStr && !t.done);
+            grid.innerHTML += `<div class="day ${isToday ? 'today' : ''}" onclick="openM(${d})" style="${hasPending ? 'background:#f0edff; border-color:#6c5ce7;' : ''}">${d}</div>`;
         }
     }
 
     function changeMonth(step) { currentViewDate.setMonth(currentViewDate.getMonth() + step); renderCalendar(); }
-    function toggle(id) { const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; db.ref('hub_raquel_v2026').update({ tasks }); }
-    function setCol(c) { daySettings[selDate] = c; db.ref('hub_raquel_v2026').update({ daySettings }); }
+    
+    function toggle(id) { 
+        const i = tasks.findIndex(t => t.id === id); 
+        const newState = !tasks[i].done;
+        tasks[i].done = newState; 
+        if(newState) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#6c5ce7', '#a29bfe'] });
+        db.ref('hub_raquel_v2026').update({ tasks }); 
+    }
+
     function openM(d) { 
         selDate = `${currentViewDate.getFullYear()}-${String(currentViewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        document.getElementById('m-date-text').innerText = `${d}/${currentViewDate.getMonth()+1}`;
+        document.getElementById('m-date-text').innerText = `${d} de ${document.getElementById('month-display').innerText}`;
         document.getElementById('modal').style.display="flex"; 
     }
     function closeM() { document.getElementById('modal').style.display="none"; }
     function add() {
         const v = document.getElementById('t-in').value; if(!v) return;
-        tasks.push({ id: Date.now(), title: v, date: selDate, done: false });
+        tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel });
         db.ref('hub_raquel_v2026').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
