@@ -43,9 +43,23 @@
 
         .header-widget h1 { margin: 0; font-size: 22px; font-family: 'Syne'; color: white; cursor: pointer; }
 
+        /* BANNER MOTIVACIONAL */
+        .motivation-banner {
+            background: rgba(255, 255, 255, 0.15);
+            margin: 12px 0 0;
+            padding: 10px 15px;
+            border-radius: 15px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            line-height: 1.4;
+        }
+
         .sync-btn {
-            position: absolute; top: 55px; right: 20px;
-            background: rgba(255,255,255,0.2); border: none; width: 38px; height: 38px;
+            position: absolute; top: 50px; right: 20px;
+            background: rgba(255,255,255,0.2); border: none; width: 35px; height: 35px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;
         }
 
@@ -64,7 +78,7 @@
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
         .day { 
             aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 800; font-size: 12px; border: 1px solid #f2f2f7; background: #fafafa; cursor: pointer;
+            font-weight: 800; font-size: 12px; border: 1px solid #f2f2f7; background: #fafafa; cursor: pointer; position: relative;
         }
         .day.selected-day { border: 2px solid #6c5ce7; background: #efeeff; color: #6c5ce7; }
         .day.today { background: var(--grad); color: white; border: none; }
@@ -104,7 +118,6 @@
         .cat-btn.selected { border-color: #1c1c1e; transform: scale(1.05); }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0f1f8; margin-bottom: 20px; text-align: center; font-size: 16px; }
         .btn-add { background: var(--grad); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 800; }
-        .btn-close { margin-top: 15px; background: none; border: none; color: #8e8e93; font-size: 12px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -112,6 +125,11 @@
 <header class="header-widget">
     <button class="sync-btn" onclick="location.reload()">🔄</button>
     <h1 onclick="filterDate('')">Agenda Raquel</h1>
+    
+    <div id="motivation" class="motivation-banner">
+        "Os problemas nunca vão desaparecer, mas a força para superá-los nasce do seu interior."
+    </div>
+
     <div style="width: 100%; background: rgba(255,255,255,0.3); height: 5px; border-radius: 10px; margin-top: 15px; overflow: hidden;">
         <div id="p-bar" style="background: white; height: 100%; width: 0%; transition: 1s ease;"></div>
     </div>
@@ -148,7 +166,6 @@
         </div>
         <input type="text" id="t-in" placeholder="Descrição..." onkeydown="if(event.key === 'Enter') add()">
         <button class="btn-add" onclick="add()">ADICIONAR</button>
-        <button class="btn-close" onclick="closeM()">CANCELAR</button>
     </div>
 </div>
 
@@ -163,15 +180,43 @@
 
     let tasks = [];
     let currentViewDate = new Date(); 
-    let selDate = ""; // Data para filtro e adição
+    let selDate = "";
     let selCat = "gym";
     let selLabel = "💪 ACADEMIA";
+
+    const quotes = [
+        "Raquel, educar a mente é treinar a emoção para ser feliz nos terrenos da inteligência. - Augusto Cury",
+        "Não tenha medo do caminho, tenha medo de não caminhar. - Augusto Cury",
+        "Raquel, sem sonhos, a vida não tem brilho. Sem metas, os sonhos não têm alicerces. - Augusto Cury",
+        "Vencer sem riscos é triunfar sem glórias. Vamos para cima! 💪",
+        "Cada tarefa concluída é um passo rumo à sua melhor versão, Raquel! ✨"
+    ];
 
     db.ref('hub_raquel_v2026').on('value', snap => {
         const data = snap.val() || {};
         tasks = data.tasks || [];
         render();
+        updateMotivation();
     });
+
+    function updateMotivation() {
+        const banner = document.getElementById('motivation');
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayTasks = tasks.filter(t => t.date === todayStr);
+        const gymPending = todayTasks.some(t => t.category === 'gym' && !t.done);
+        const othersPending = todayTasks.some(t => t.category !== 'gym' && !t.done);
+
+        if (gymPending) {
+            banner.innerHTML = "🏋️‍♀️ <b>Raquel, o treino de hoje é o seu compromisso com você mesma!</b> Não deixe para amanhã.";
+            banner.style.background = "rgba(255, 71, 87, 0.3)";
+        } else if (othersPending) {
+            banner.innerHTML = "🚀 <b>Foco no processo!</b> Você já começou, agora finalize as tarefas para ter um descanso merecido.";
+            banner.style.background = "rgba(255, 255, 255, 0.2)";
+        } else {
+            banner.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+            banner.style.background = "rgba(255, 255, 255, 0.15)";
+        }
+    }
 
     function selectCat(cat, label) {
         selCat = cat; selLabel = label;
@@ -196,11 +241,7 @@
         const pendingContainer = document.getElementById('pending-tasks');
         const completedContainer = document.getElementById('completed-tasks');
         
-        // FILTRAR TAREFAS: Se selDate estiver vazio, mostra todas as futuras. Se não, mostra só do dia.
-        const filtered = selDate 
-            ? tasks.filter(t => t.date === selDate)
-            : tasks;
-
+        const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
         const sorted = filtered.sort((a,b) => a.date.localeCompare(b.date));
 
         const pnt = sorted.filter(t => !t.done).map(t => createTaskHtml(t)).join('');
@@ -208,7 +249,7 @@
 
         const filterLabel = selDate ? ` do dia ${selDate.split('-').reverse().join('/')} <span class="clear-filter" onclick="filterDate('')">Ver tudo</span>` : ' (Todas)';
 
-        pendingContainer.innerHTML = `<div class="section-title">Pendentes ${filterLabel}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93; margin-left:5px;">Nada para este dia ✨</p>');
+        pendingContainer.innerHTML = `<div class="section-title">Pendentes ${filterLabel}</div>` + (pnt || '<p style="font-size:12px; color:#8e8e93; margin-left:5px;">Nada para hoje ✨</p>');
         completedContainer.innerHTML = cmt ? `<div class="section-title">Concluídas</div>` + cmt : '';
         
         renderCalendar();
@@ -244,28 +285,29 @@
     }
 
     function handleDayClick(dateStr, day) {
-        // Ao clicar, filtra a lista
         filterDate(dateStr);
-        // Pergunta se quer adicionar algo (abrir modal) ou apenas ver
-        // Para manter ágil, vamos abrir o modal se clicar no dia já selecionado
         document.getElementById('m-date-text').innerText = day + " de " + document.getElementById('month-display').innerText;
         document.getElementById('modal').style.display="flex"; 
         setTimeout(() => document.getElementById('t-in').focus(), 100);
     }
 
     function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
+    
     function toggle(id) { 
         const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done; 
         if(tasks[i].done) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
         db.ref('hub_raquel_v2026').update({ tasks }); 
     }
+
     function closeM() { document.getElementById('modal').style.display="none"; }
+    
     function add() {
         const v = document.getElementById('t-in').value; if(!v) return;
         tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel });
         db.ref('hub_raquel_v2026').update({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
+    
     function del(e, i) { e.stopPropagation(); tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); }
 </script>
 </body>
