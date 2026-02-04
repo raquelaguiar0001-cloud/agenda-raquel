@@ -1,38 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Agenda Raquel</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🗓️</text></svg>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Syne:wght@700&display=swap');
+        :root { --bg: #f9f8ff; --work: #ff7675; --gym: #8e7dff; --home: #55efc4; --study: #f9ca24; --lilas: #8e7dff; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: #2d3436; }
+        .header-widget { padding: 55px 25px 30px; background: linear-gradient(-45deg, #8e7dff, #9b59b6, #a29bfe, #8e7dff); background-size: 400% 400%; animation: gradientBG 15s ease infinite; border-bottom-left-radius: 45px; border-bottom-right-radius: 45px; display: flex; flex-direction: column; gap: 20px; position: relative; flex-shrink: 0; box-shadow: 0 12px 30px rgba(142, 125, 255, 0.25); }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
+        .user-name { font-family: 'Syne', sans-serif; font-size: 26px; color: white; font-weight: 700; }
+        .perf-compact { background: rgba(255, 255, 255, 0.18); backdrop-filter: blur(12px); padding: 12px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); display: flex; gap: 15px; text-align: left; }
+        .perf-mini-item { display: flex; flex-direction: column; }
+        .perf-mini-label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+        .perf-mini-val { font-size: 15px; font-weight: 800; color: white; }
+        .sync-btn { background: white; border: none; width: 40px; height: 40px; border-radius: 12px; color: var(--lilas); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .motivation-container { background: white; padding: 12px 25px; border-radius: 20px; text-align: center; align-self: center; width: fit-content; max-width: 90%; margin: 0 auto; min-height: 45px; display: flex; align-items: center; box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+        .motivation-text { font-size: 14px; font-weight: 600; color: var(--lilas); font-style: italic; }
+        .main-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .calendar-section { background: white; margin: 15px; padding: 22px; border-radius: 35px; flex-shrink: 0; }
+        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
+        .day { aspect-ratio: 1; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; cursor: pointer; color: #a29bfe; }
+        .day.has-task { background: #f0eeff; color: var(--lilas); }
+        .day.selected-day { border: 2.5px solid var(--lilas); color: var(--lilas); }
+        .day.today { background: var(--lilas); color: white; box-shadow: 0 5px 12px rgba(142,125,255,0.3); }
+        .task-list { padding: 0 20px 100px; flex: 1; overflow-y: auto; }
+        .section-title { font-size: 11px; font-weight: 800; color: var(--lilas); margin: 30px 0 15px; text-transform: uppercase; letter-spacing: 2px; }
+        .task-card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border-left: 7px solid #dfe6e9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); cursor: pointer; }
+        .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
+        .task-icon { width:45px; height:45px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+        .bg-work { background: #fff0f0; color: var(--work); }
+        .bg-gym { background: #f3f0ff; color: var(--gym); }
+        .bg-home { background: #ebfaf6; color: var(--home); }
+        .bg-study { background: #fffdf0; color: var(--study); }
+        .fab-add { position: fixed; bottom: 35px; right: 35px; background: var(--lilas); color: white; width: 70px; height: 70px; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 10px 20px rgba(142,125,255,0.4); display: none; cursor: pointer; z-index: 100; }
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 1000; }
+        .modal-box { background: white; padding: 40px; border-radius: 40px; width: 92%; max-width: 420px; text-align: center; }
+        input { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #f1f2f6; margin-bottom: 20px; text-align: center; font-size: 16px; font-family: inherit; }
+        .btn-add-submit { background: var(--lilas); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; font-size: 16px; cursor: pointer; }
+        .cat-btn { padding:15px; border-radius:15px; font-size:11px; font-weight:800; cursor:pointer; border: 2px solid transparent; }
+        #date-badge { font-size: 12px; background: #f3f0ff; color: var(--lilas); padding: 4px 12px; border-radius: 10px; font-weight: 800; display: none; }
+    </style>
+</head>
+<body>
+<header class="header-widget">
+    <div class="top-row">
+        <div class="user-name">Raquel Aguiar</div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+            <div class="perf-compact">
+                <div class="perf-mini-item">
+                    <span class="perf-mini-label">Progresso</span>
+                    <span id="perf-done" class="perf-mini-val">0/0</span>
+                </div>
+                <div class="perf-mini-item">
+                    <span class="perf-mini-label">Atenção</span>
+                    <span id="perf-focus" class="perf-mini-val" style="color:#ffdada;">---</span>
+                </div>
+            </div>
+            <button class="sync-btn" onclick="location.reload()">🔄</button>
+        </div>
+    </div>
+    <div class="motivation-container">
+        <div id="motivation" class="motivation-text">"A constância vence o talento."</div>
+    </div>
+</header>
+<div class="main-content">
+    <section class="calendar-section">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="month-display" style="margin:0; font-family:'Syne'; color:var(--lilas); text-transform: capitalize;">Mês</h3>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="date-badge"></span>
+                <button id="toggle-btn" onclick="toggleCal()" style="background:none; border:none; color:var(--lilas); font-weight:800; font-size:10px; cursor:pointer;">RECOLHER</button>
+            </div>
+        </div>
+        <div id="cal-content">
+            <div style="display:flex; justify-content: space-between; margin-top: 15px;">
+                <button onclick="changeMonth(-1)" style="border:none; background:#f8f9fd; border-radius:10px; padding:8px 12px; color:var(--lilas); font-weight:bold;">❮</button>
+                <button onclick="changeMonth(1)" style="border:none; background:#f8f9fd; border-radius:10px; padding:8px 12px; color:var(--lilas); font-weight:bold;">❯</button>
+            </div>
+            <div class="grid-cal" id="calendar-grid"></div>
+        </div>
+    </section>
+    <main class="task-list">
+        <div id="pending-tasks"></div>
+        <div id="completed-tasks"></div>
+    </main>
+</div>
+<button id="add-fab" class="fab-add" onclick="openModal()">+</button>
+<div id="modal" onclick="closeM()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <h3 id="m-date-text" style="color:var(--lilas); font-family:'Syne';">Nova Tarefa</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+            <div id="btn-gym" class="cat-btn" style="background:#f3f0ff; color:var(--gym); border-color: var(--gym);" onclick="selectCat('gym', '💪 ACADEMIA')">ACADEMIA</div>
+            <div id="btn-work" class="cat-btn" style="background:#fff0f0; color:var(--work);" onclick="selectCat('work', '💼 TRABALHO')">TRABALHO</div>
+            <div id="btn-home" class="cat-btn" style="background:#ebfaf6; color:var(--home);" onclick="selectCat('home', '🏠 CASA')">CASA</div>
+            <div id="btn-study" class="cat-btn" style="background:#fffdf0; color:var(--study);" onclick="selectCat('study', '📚 ESTUDOS')">ESTUDOS</div>
+        </div>
+        <input type="text" id="t-in" placeholder="O que vamos fazer?" onkeydown="if(event.key==='Enter') add()">
+        <button class="btn-add-submit" onclick="add()">ADICIONAR</button>
+    </div>
+</div>
 <script>
-    // ... (mantenha as configurações iniciais do Firebase e variáveis)
+    const firebaseConfig = { apiKey: "AIzaSyAXIOrHsZbHXvOIGTk0HS8NOwVBvpmwrOo", databaseURL: "https://ue-joao-tavares-da-costa-default-rtdb.firebaseio.com", projectId: "ue-joao-tavares-da-costa" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let tasks = [], currentViewDate = new Date(), selDate = "", selCat = "gym", selLabel = "💪 ACADEMIA";
+    const quotes = ["Raquel, o sucesso é a soma de pequenos esforços.", "A constância vence o talento.", "Seja mais forte que sua melhor desculpa.", "Educar a mente é treinar a emoção para ser feliz.", "Pense antes de reagir."];
+    
+    function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
+    
+    db.ref('hub_raquel_v2026').on('value', snap => { 
+        tasks = (snap.val() || {}).tasks || []; 
+        render(); 
+        calculatePerformance(); 
+        updateQuote(); 
+    });
 
-    function calculatePerformance() {
-        // Filtra tarefas apenas do dia selecionado (ou de hoje, se nenhum selecionado)
-        const dateToCalc = selDate || new Date().toISOString().split('T')[0];
-        const dayTasks = tasks.filter(t => t.date === dateToCalc);
-        
-        const total = dayTasks.length;
-        const done = dayTasks.filter(t => t.done).length;
-        const pending = dayTasks.filter(t => !t.done);
-
-        // Atualiza o display de progresso (ex: 7/10)
-        const perfDoneElement = document.getElementById('perf-done');
-        perfDoneElement.innerText = total > 0 ? `${done}/${total}` : "0/0";
-
-        // Lógica de "Focar" ou "Atenção"
-        const focusElement = document.getElementById('perf-focus');
-        if (pending.length > 0) {
-            // Descobre qual categoria tem mais tarefas pendentes
-            const counts = pending.reduce((acc, t) => { 
-                acc[t.label] = (acc[t.label] || 0) + 1; 
-                return acc; 
-            }, {});
-            const topCategory = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-            // Mostra apenas o emoji/nome da categoria que precisa de atenção
-            focusElement.innerText = topCategory.split(' ')[1] || topCategory;
-            focusElement.style.color = "#ffdada"; 
-        } else if (total > 0 && pending.length === 0) {
-            focusElement.innerText = "✨";
-            focusElement.style.color = "#55efc4";
+    function toggleCal() { 
+        const c = document.getElementById('cal-content'), badge = document.getElementById('date-badge'), btn = document.getElementById('toggle-btn');
+        if(c.style.display === 'none') {
+            c.style.display = 'block'; badge.style.display = 'none'; btn.innerText = "RECOLHER";
         } else {
-            focusElement.innerText = "---";
+            c.style.display = 'none'; badge.style.display = 'inline-block';
+            badge.innerText = selDate ? selDate.split('-').reverse().join('') : "Geral";
+            btn.innerText = "EXPANDIR";
         }
     }
 
-    // ... (mantenha o restante das funções como render, add, toggle)
+    function calculatePerformance() {
+        // Usa a data selecionada ou a de hoje para o monitor
+        const dateToCalc = selDate || new Date().toISOString().split('T')[0];
+        const dayTasks = tasks.filter(t => t.date === dateToCalc);
+        const done = dayTasks.filter(t => t.done).length;
+        const total = dayTasks.length;
+        const pending = dayTasks.filter(t => !t.done);
+
+        document.getElementById('perf-done').innerText = `${done}/${total}`;
+        
+        const focusElement = document.getElementById('perf-focus');
+        if(pending.length > 0) {
+            const counts = pending.reduce((acc, t) => { acc[t.label] = (acc[t.label] || 0) + 1; return acc; }, {});
+            const topCat = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+            focusElement.innerText = topCat.split(' ')[1]; // Pega só o nome (ex: TRABALHO)
+            focusElement.style.color = "#ffdada";
+        } else {
+            focusElement.innerText = total > 0 ? "✨ OK" : "---";
+            focusElement.style.color = "white";
+        }
+    }
+
+    function render() {
+        const pendingContainer = document.getElementById('pending-tasks'), completedContainer = document.getElementById('completed-tasks');
+        const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
+        pendingContainer.innerHTML = `<div class="section-title">Pendentes</div>` + (filtered.filter(t => !t.done).map(t => createTaskHtml(t)).join('') || '<p style="font-size:12px; color:#b2bec3;">Tudo pronto! ✨</p>');
+        completedContainer.innerHTML = filtered.some(t => t.done) ? `<div class="section-title">Concluídas</div>` + filtered.filter(t => t.done).map(t => createTaskHtml(t)).join('') : '';
+        renderCalendar();
+        if(document.getElementById('cal-content').style.display === 'none') {
+            document.getElementById('date-badge').innerText = selDate ? selDate.split('-').reverse().join('') : "Geral";
+        }
+    }
+
+    function createTaskHtml(t) {
+        const icons = { study: '📚', work: '💼', home: '🏠', gym: '💪' };
+        const catColor = `var(--${t.category || 'gym'})`;
+        return `<div class="task-card ${t.done ? 'is-done' : ''}" style="border-left-color: ${catColor}" onclick="toggle(${t.id})">
+            <div class="task-icon bg-${t.category || 'gym'}">${t.done ? '✨' : (icons[t.category] || '💪')}</div>
+            <div style="flex:1">
+                <div style="color:${catColor}; font-size:10px; font-weight:800;">${t.label}</div>
+                <div style="font-weight:700; font-size:16px;">${t.title}</div>
+            </div>
+            <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#dfe6e9; font-size:24px;">×</button>
+        </div>`;
+    }
+
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-grid'); grid.innerHTML = "";
+        const m = currentViewDate.getMonth(), y = currentViewDate.getFullYear();
+        document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
+        const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
+        for (let i = 0; i < first; i++) grid.innerHTML += `<div></div>`;
+        for (let d = 1; d <= days; d++) {
+            const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const isToday = new Date().toISOString().split('T')[0] === dateStr;
+            grid.innerHTML += `<div class="day ${tasks.some(t => t.date === dateStr) ? 'has-task' : ''} ${isToday ? 'today' : ''} ${selDate === dateStr ? 'selected-day' : ''}" onclick="filterDate('${dateStr}')">${d}</div>`;
+        }
+    }
+
+    function filterDate(d) { selDate = (selDate === d) ? "" : d; document.getElementById('add-fab').style.display = selDate ? "flex" : "none"; render(); calculatePerformance(); }
+    function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
+    function openModal() { document.getElementById('m-date-text').innerText = "Data: " + selDate.split('-').reverse().join(''); document.getElementById('modal').style.display="flex"; setTimeout(() => document.getElementById('t-in').focus(), 100); }
+    function closeM() { document.getElementById('modal').style.display="none"; }
+    function selectCat(c, l) { selCat = c; selLabel = l; document.querySelectorAll('.cat-btn').forEach(b => b.style.borderColor = 'transparent'); document.getElementById('btn-'+c).style.borderColor = `var(--${c})`; }
+    function add() { 
+        const v = document.getElementById('t-in').value; if(!v) return;
+        tasks.push({ id: Date.now(), title: v, date: selDate, done: false, category: selCat, label: selLabel });
+        db.ref('hub_raquel_v2026').update({ tasks }); document.getElementById('t-in').value = ""; closeM();
+    }
+    function toggle(id) { 
+        const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done;
+        if(tasks[i].done) confetti({ particleCount: 60, spread: 70, colors: ['#8e7dff', '#ffffff'] });
+        db.ref('hub_raquel_v2026').update({ tasks });
+    }
+    function del(e, i) { e.stopPropagation(); if(confirm('Remover esta tarefa?')) { tasks = tasks.filter(t => t.id !== i); db.ref('hub_raquel_v2026').update({ tasks }); } }
 </script>
+</body>
+</html>
