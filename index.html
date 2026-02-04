@@ -14,7 +14,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: #2d3436; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Header */
         .header-widget { padding: 45px 25px 25px; background: linear-gradient(135deg, #8e7dff, #a29bfe); border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; }
         .top-row { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
         .user-name { font-family: 'Syne', sans-serif; font-size: 22px; color: white; font-weight: 700; }
@@ -24,14 +23,216 @@
         .perf-mini-val { font-size: 14px; font-weight: 800; color: white; }
         .sync-btn { background: white; border: none; width: 35px; height: 35px; border-radius: 10px; color: var(--lilas); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
-        /* Frases */
-        .motivation-container { background: white; padding: 10px 20px; border-radius: 18px; text-align: center; align-self: center; width: fit-content; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .motivation-text { font-size: 13px; font-weight: 600; color: var(--lilas); font-style: italic; }
+        .motivation-container { background: white; padding: 12px 25px; border-radius: 18px; text-align: center; align-self: center; width: fit-content; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.05); min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        .motivation-text { font-size: 13px; font-weight: 600; color: var(--lilas); font-style: italic; line-height: 1.4; }
 
-        /* Barra de Controle */
         .control-bar { background: white; margin: 15px; padding: 12px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .month-label { font-family: 'Syne', sans-serif; color: var(--lilas); text-transform: capitalize; font-size: 16px; }
         .date-badge { background: #f0eeff; color: var(--lilas); padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 12px; }
         .expand-btn { color: var(--lilas); font-weight: 800; font-size: 10px; cursor: pointer; border: none; background: none; text-transform: uppercase; }
 
-        .main-container { display: flex; flex: 1;
+        .main-container { display: flex; flex: 1; overflow: hidden; padding: 0 15px 15px; gap: 15px; }
+        #sidebar-cal { width: 280px; background: white; border-radius: 25px; padding: 15px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: fit-content; }
+        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+        .day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; cursor: pointer; color: #a29bfe; transition: 0.3s; }
+        .day.has-task { background: #f0eeff; }
+        .day.today { border: 2px solid var(--lilas); color: var(--lilas); }
+        .day.selected-day { background: var(--lilas) !important; color: white !important; box-shadow: 0 4px 12px rgba(142, 125, 255, 0.4); transform: scale(1.1); z-index: 2; }
+
+        .task-section { flex: 1; overflow-y: auto; padding: 0 5px; }
+        .section-title { font-size: 10px; font-weight: 800; color: var(--lilas); margin: 15px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .task-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border-left: 6px solid #dfe6e9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
+        .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+        .bg-work { background: #fff0f0; color: var(--work); }
+        .bg-fitness { background: #f3f0ff; color: var(--fitness); }
+        .bg-home { background: #ebfaf6; color: var(--home); }
+        .bg-study { background: #fffdf0; color: var(--study); }
+
+        .fab-add { position: fixed; bottom: 25px; right: 25px; background: var(--lilas); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 8px 20px rgba(142,125,255,0.4); cursor: pointer; display: none; z-index: 100; }
+
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 1000; }
+        .modal-box { background: white; padding: 25px; border-radius: 30px; width: 90%; max-width: 380px; text-align: center; }
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .cat-btn { padding: 10px; border-radius: 10px; font-size: 10px; font-weight: 800; cursor: pointer; border: 2px solid transparent; }
+        input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #f1f2f6; margin-bottom: 15px; font-size: 15px; text-align: center; }
+
+        @media (max-width: 800px) { .main-container { flex-direction: column; } #sidebar-cal { width: 100%; } }
+    </style>
+</head>
+<body>
+
+<header class="header-widget">
+    <div class="top-row">
+        <div class="user-name">Raquel Aguiar</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="perf-compact">
+                <div><span class="perf-mini-label">Status</span><span id="perf-done" class="perf-mini-val">0/0</span></div>
+                <div><span class="perf-mini-label">Foco</span><span id="perf-focus" class="perf-mini-val">---</span></div>
+            </div>
+            <button class="sync-btn" onclick="location.reload()">🔄</button>
+        </div>
+    </div>
+    <div class="motivation-container">
+        <div id="motivation" class="motivation-text">"Carregando sabedoria..."</div>
+    </div>
+</header>
+
+<div class="control-bar">
+    <div class="month-label" id="month-display">Mês</div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="date-badge" id="date-badge">04/02/2026</div>
+        <button class="expand-btn" onclick="toggleSidebar()" id="toggle-txt">Expandir</button>
+    </div>
+</div>
+
+<div class="main-container">
+    <aside id="sidebar-cal">
+        <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
+            <button onclick="changeMonth(-1)" style="border:none; background:#f1f2f6; border-radius:8px; padding:5px 10px; cursor:pointer;">❮</button>
+            <button onclick="changeMonth(1)" style="border:none; background:#f1f2f6; border-radius:8px; padding:5px 10px; cursor:pointer;">❯</button>
+        </div>
+        <div class="grid-cal" id="calendar-grid"></div>
+    </aside>
+
+    <section class="task-section">
+        <div id="pending-tasks"></div>
+        <div id="completed-tasks"></div>
+    </section>
+</div>
+
+<button id="add-fab" class="fab-add" onclick="openModal()">+</button>
+
+<div id="modal" onclick="closeM()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <h3 style="color:var(--lilas); margin:0; font-size: 18px;">Nova Tarefa</h3>
+        <div class="cat-grid">
+            <div id="btn-fitness" class="cat-btn bg-fitness" onclick="setCat('fitness','💪 Fitness')">FITNESS</div>
+            <div id="btn-work" class="cat-btn bg-work" onclick="setCat('work','💼 Trabalho')">TRABALHO</div>
+            <div id="btn-home" class="cat-btn bg-home" onclick="setCat('home','🏠 Casa')">CASA</div>
+            <div id="btn-study" class="cat-btn bg-study" onclick="setCat('study','📚 Estudo')">ESTUDO</div>
+        </div>
+        <input type="text" id="t-in" placeholder="O que vamos fazer?" onkeydown="if(event.key==='Enter') add()">
+        <button onclick="add()" style="background:var(--lilas); color:white; border:none; padding:14px; border-radius:10px; width:100%; font-weight:800;">SALVAR</button>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyAXIOrHsZbHXvOIGTk0HS8NOwVBvpmwrOo", databaseURL: "https://ue-joao-tavares-da-costa-default-rtdb.firebaseio.com", projectId: "ue-joao-tavares-da-costa" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    let tasks = [], currentViewDate = new Date(), selDate = "2026-02-04", selCat = "fitness", selLabel = "💪 Fitness";
+    
+    const quotes = [
+        "A gratidão é o solo onde a alegria floresce. (Charles Spurgeon)",
+        "Dificuldades preparam pessoas comuns para destinos extraordinários. (C.S. Lewis)",
+        "O que você é hoje é resultado das suas escolhas de ontem. (Tiago Brunet)",
+        "Fé não é a ausência de medo, mas a confiança em Deus apesar dele. (Talita Pereira)",
+        "O sucesso sem felicidade é o pior tipo de fracasso. (Augusto Cury)",
+        "O que conta não é o que fizeram de nós, mas o que fazemos com o que fizeram de nós. (Jean-Paul Sartre)",
+        "Não remova os obstáculos, peça força para superá-los. (Cora Coralina)",
+        "A sabedoria começa na reflexão. (Sócrates)",
+        "Sua herança é o que você deixa nos outros, não para os outros. (Tiago Brunet)",
+        "A esperança é a única coisa mais forte que o medo."
+    ];
+
+    function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
+
+    db.ref('hub_raquel_v2026').on('value', snap => {
+        tasks = (snap.val() || {}).tasks || [];
+        render();
+        calculatePerformance();
+        updateQuote();
+    });
+
+    function toggleSidebar() {
+        const side = document.getElementById('sidebar-cal');
+        const btn = document.getElementById('toggle-txt');
+        side.style.display = (side.style.display === 'flex') ? 'none' : 'flex';
+        btn.innerText = (side.style.display === 'flex') ? "Recolher" : "Expandir";
+    }
+
+    function render() {
+        const pendingContainer = document.getElementById('pending-tasks'), completedContainer = document.getElementById('completed-tasks');
+        const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
+        document.getElementById('date-badge').innerText = selDate ? selDate.split('-').reverse().join('/') : "---";
+
+        pendingContainer.innerHTML = `<div class="section-title">Pendentes</div>` + 
+            (filtered.filter(t => !t.done).map(t => createTaskHtml(t)).join('') || '<p style="font-size:12px; color:#ccc;">Vazio ✨</p>');
+        
+        completedContainer.innerHTML = filtered.some(t => t.done) ? `<div class="section-title">Concluídas</div>` + 
+            filtered.filter(t => t.done).map(t => createTaskHtml(t)).join('') : '';
+
+        renderCalendar();
+    }
+
+    function createTaskHtml(t) {
+        const icons = { fitness: '💪', work: '💼', home: '🏠', study: '📚' };
+        return `<div class="task-card ${t.done?'is-done':''}" style="border-left-color: var(--${t.category})" onclick="toggle(${t.id})">
+            <div class="task-icon bg-${t.category}">${t.done ? '✨' : icons[t.category]}</div>
+            <div style="flex:1">
+                <div style="font-weight:800; font-size:15px;">${t.title}</div>
+                <div style="font-size:10px; color:var(--${t.category}); font-weight:800; text-transform:uppercase;">${t.label}</div>
+            </div>
+            <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:22px;">×</button>
+        </div>`;
+    }
+
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-grid'); grid.innerHTML = "";
+        const m = currentViewDate.getMonth(), y = currentViewDate.getFullYear();
+        document.getElementById('month-display').innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentViewDate);
+        const firstDay = new Date(y, m, 1).getDay(), totalDays = new Date(y, m + 1, 0).getDate();
+        for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
+        for (let d = 1; d <= totalDays; d++) {
+            const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const isToday = new Date().toISOString().split('T')[0] === dateStr;
+            grid.innerHTML += `<div class="day ${tasks.some(t => t.date === dateStr) ? 'has-task' : ''} ${isToday ? 'today' : ''} ${selDate === dateStr ? 'selected-day' : ''}" onclick="filterDate('${dateStr}')">${d}</div>`;
+        }
+    }
+
+    function filterDate(d) {
+        selDate = (selDate === d) ? "" : d;
+        document.getElementById('add-fab').style.display = selDate ? "flex" : "none";
+        render();
+        calculatePerformance();
+    }
+
+    function calculatePerformance() {
+        const dateToCalc = selDate || new Date().toISOString().split('T')[0];
+        const dayTasks = tasks.filter(t => t.date === dateToCalc);
+        const done = dayTasks.filter(t => t.done).length;
+        document.getElementById('perf-done').innerText = `${done}/${dayTasks.length}`;
+        const pending = dayTasks.filter(t => !t.done);
+        if(pending.length > 0) {
+            document.getElementById('perf-focus').innerText = (pending[0].label || "").split(' ')[1]?.toUpperCase() || "GERAL";
+        } else {
+            document.getElementById('perf-focus').innerText = dayTasks.length > 0 ? "OK" : "---";
+        }
+    }
+
+    function changeMonth(step) { currentViewDate.setMonth(currentViewDate.getMonth() + step); renderCalendar(); }
+    function openModal() { document.getElementById('modal').style.display="flex"; document.getElementById('t-in').focus(); }
+    function closeM() { document.getElementById('modal').style.display="none"; }
+    function setCat(c, l) { selCat = c; selLabel = l; document.querySelectorAll('.cat-btn').forEach(b => b.style.borderColor = 'transparent'); document.getElementById('btn-'+c).style.borderColor = 'var(--lilas)'; }
+    
+    function add() {
+        const t = document.getElementById('t-in').value;
+        if(!t) return;
+        tasks.push({ id: Date.now(), title: t, date: selDate, done: false, category: selCat, label: selLabel });
+        db.ref('hub_raquel_v2026').set({ tasks });
+        document.getElementById('t-in').value = ""; closeM();
+    }
+    
+    function toggle(id) {
+        const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done;
+        if(tasks[i].done) confetti({ particleCount: 40, spread: 50, colors: ['#8e7dff'] });
+        db.ref('hub_raquel_v2026').set({ tasks });
+    }
+    
+    function del(e, id) { e.stopPropagation(); if(confirm('Excluir?')) { tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_v2026').set({ tasks }); } }
+</script>
+</body>
+</html>
