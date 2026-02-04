@@ -9,56 +9,48 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Syne:wght@700&display=swap');
-        :root { --bg: #f9f8ff; --work: #ff7675; --gym: #8e7dff; --home: #55efc4; --study: #f9ca24; --lilas: #8e7dff; }
+        :root { --bg: #f9f8ff; --lilas: #8e7dff; --work: #ff7675; --gym: #8e7dff; }
         
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: #2d3436; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Header */
-        .header-widget { padding: 40px 20px 25px; background: linear-gradient(135deg, #8e7dff, #a29bfe); border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; box-shadow: 0 10px 25px rgba(142, 125, 255, 0.2); }
+        /* Header conforme imagem */
+        .header-widget { padding: 50px 25px 30px; background: linear-gradient(135deg, #8e7dff, #a29bfe); border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; flex-shrink: 0; }
         .top-row { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
-        .user-name { font-family: 'Syne', sans-serif; font-size: 22px; color: white; }
-        .perf-compact { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 18px; display: flex; gap: 12px; border: 1px solid rgba(255,255,255,0.3); }
-        .perf-mini-label { font-size: 8px; font-weight: 800; text-transform: uppercase; color: white; opacity: 0.9; }
-        .perf-mini-val { font-size: 14px; font-weight: 800; color: white; }
-
-        /* Layout Desktop: Lado a Lado */
-        .main-container { display: flex; flex: 1; overflow: hidden; max-width: 1400px; margin: 0 auto; width: 100%; padding: 20px; gap: 20px; }
-
-        /* Coluna Esquerda: Calendário Compacto */
-        .sidebar-calendar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; }
-        .calendar-card { background: white; padding: 20px; border-radius: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .user-name { font-family: 'Syne', sans-serif; font-size: 24px; color: white; font-weight: 700; }
         
-        /* Coluna Direita: Lista de Tarefas (Foco Principal) */
-        .task-section { flex: 1; overflow-y: auto; padding-right: 10px; }
-        
-        /* Estilo Grade Calendário */
-        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+        .perf-compact { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 10px 15px; border-radius: 20px; display: flex; gap: 15px; border: 1px solid rgba(255,255,255,0.3); }
+        .perf-mini-label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: white; }
+        .perf-mini-val { font-size: 15px; font-weight: 800; color: white; display: block; }
+
+        /* Barra de Controle (Imagem 1) */
+        .control-bar { background: white; margin: 15px; padding: 15px 25px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .month-label { font-family: 'Syne', sans-serif; color: var(--lilas); text-transform: capitalize; font-size: 18px; }
+        .date-badge { background: #f0eeff; color: var(--lilas); padding: 6px 15px; border-radius: 12px; font-weight: 800; font-size: 13px; letter-spacing: 1px; }
+        .expand-btn { color: var(--lilas); font-weight: 800; font-size: 11px; cursor: pointer; border: none; background: none; text-transform: uppercase; }
+
+        .main-container { display: flex; flex: 1; overflow: hidden; padding: 0 15px 20px; gap: 15px; }
+
+        /* Calendário Compacto Lateral */
+        #sidebar-cal { width: 280px; background: white; border-radius: 30px; padding: 20px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: fit-content; }
+        .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 15px; }
         .day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; color: #a29bfe; }
+        .day.selected-day { background: var(--lilas); color: white; }
         .day.has-task { background: #f0eeff; }
-        .day.selected-day { background: var(--lilas); color: white; box-shadow: 0 4px 10px rgba(142,125,255,0.3); }
         .day.today { border: 2px solid var(--lilas); }
 
-        /* Mobile Adjustments */
-        @media (max-width: 850px) {
-            .main-container { flex-direction: column; padding: 15px; }
-            .sidebar-calendar { width: 100%; }
-            .calendar-card { padding: 15px; }
-        }
-
-        /* Task Cards */
+        /* Lista de Tarefas */
+        .task-section { flex: 1; overflow-y: auto; padding: 0 10px; }
         .section-title { font-size: 11px; font-weight: 800; color: var(--lilas); margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .task-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; border-left: 6px solid #dfe6e9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: 0.2s; }
-        .task-card.is-done { opacity: 0.5; transform: scale(0.98); }
-        .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .task-card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; border-left: 6px solid #dfe6e9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .task-card.is-done { opacity: 0.5; }
 
         .fab-add { position: fixed; bottom: 30px; right: 30px; background: var(--lilas); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 8px 20px rgba(142,125,255,0.4); cursor: pointer; display: none; z-index: 100; }
 
-        /* Modal */
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 1000; }
-        .modal-box { background: white; padding: 30px; border-radius: 35px; width: 90%; max-width: 380px; text-align: center; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #f1f2f6; margin-bottom: 15px; font-size: 16px; text-align: center; }
-        .btn-add-submit { background: var(--lilas); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; }
+        @media (max-width: 800px) {
+            .main-container { flex-direction: column; }
+            #sidebar-cal { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -67,32 +59,27 @@
     <div class="top-row">
         <div class="user-name">Raquel Aguiar</div>
         <div class="perf-compact">
-            <div class="perf-mini-item">
-                <span class="perf-mini-label">Status</span>
-                <span id="perf-done" class="perf-mini-val">0/0</span>
-            </div>
-            <div class="perf-mini-item">
-                <span class="perf-mini-label">Foco</span>
-                <span id="perf-focus" class="perf-mini-val">---</span>
-            </div>
+            <div><span class="perf-mini-label">Progresso</span><span id="perf-done" class="perf-mini-val">0/0</span></div>
+            <div><span class="perf-mini-label">Atenção</span><span id="perf-focus" class="perf-mini-val">---</span></div>
         </div>
     </div>
 </header>
 
+<div class="control-bar">
+    <div class="month-label" id="month-display">Fevereiro 2026</div>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <div class="date-badge" id="date-badge">00 00 0000</div>
+        <button class="expand-btn" onclick="toggleSidebar()" id="toggle-txt">Expandir</button>
+    </div>
+</div>
+
 <div class="main-container">
-    <aside class="sidebar-calendar">
-        <div class="calendar-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 id="month-display" style="margin:0; font-size:14px; font-family:'Syne'; color:var(--lilas); text-transform:capitalize;">Mês</h3>
-                <button onclick="location.reload()" style="background:none; border:none; cursor:pointer;">🔄</button>
-            </div>
-            <div id="cal-controls" style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <button onclick="changeMonth(-1)" style="border:none; background:#f1f2f6; border-radius:8px; padding:5px 10px; color:var(--lilas); font-weight:bold;">❮</button>
-                <button onclick="changeMonth(1)" style="border:none; background:#f1f2f6; border-radius:8px; padding:5px 10px; color:var(--lilas); font-weight:bold;">❯</button>
-            </div>
-            <div class="grid-cal" id="calendar-grid"></div>
+    <aside id="sidebar-cal">
+        <div style="display:flex; justify-content: space-between;">
+            <button onclick="changeMonth(-1)" style="border:none; background:#f1f2f6; border-radius:8px; padding:5px 10px; cursor:pointer;">❮</button>
+            <button onclick="changeMonth(1)" style="border:none; background:#f1f2f6; border-radius:8px; padding:5px 10px; cursor:pointer;">❯</button>
         </div>
-        <div id="selected-date-info" style="text-align:center; font-weight:800; color:var(--lilas); font-size:13px; background:white; padding:10px; border-radius:15px; display:none;"></div>
+        <div class="grid-cal" id="calendar-grid"></div>
     </aside>
 
     <section class="task-section">
@@ -103,24 +90,12 @@
 
 <button id="add-fab" class="fab-add" onclick="openModal()">+</button>
 
-<div id="modal" onclick="closeM()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <h3 id="modal-title" style="color:var(--lilas); margin-top:0;">Nova Tarefa</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-            <button class="btn-cat" onclick="selCat='gym'" style="padding:10px; border-radius:10px; border:none; background:#f3f0ff; color:var(--gym); font-weight:800; font-size:10px;">💪 ACADEMIA</button>
-            <button class="btn-cat" onclick="selCat='work'" style="padding:10px; border-radius:10px; border:none; background:#fff0f0; color:var(--work); font-weight:800; font-size:10px;">💼 TRABALHO</button>
-        </div>
-        <input type="text" id="t-in" placeholder="O que vamos fazer?" onkeydown="if(event.key==='Enter') add()">
-        <button class="btn-add-submit" onclick="add()">SALVAR</button>
-    </div>
-</div>
-
 <script>
     const firebaseConfig = { apiKey: "AIzaSyAXIOrHsZbHXvOIGTk0HS8NOwVBvpmwrOo", databaseURL: "https://ue-joao-tavares-da-costa-default-rtdb.firebaseio.com", projectId: "ue-joao-tavares-da-costa" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    let tasks = [], currentViewDate = new Date(), selDate = "", selCat = "gym";
+    let tasks = [], currentViewDate = new Date(), selDate = "";
 
     db.ref('hub_raquel_v2026').on('value', snap => {
         tasks = (snap.val() || {}).tasks || [];
@@ -128,12 +103,33 @@
         calculatePerformance();
     });
 
+    function toggleSidebar() {
+        const side = document.getElementById('sidebar-cal');
+        const btn = document.getElementById('toggle-txt');
+        if(side.style.display === 'flex') {
+            side.style.display = 'none';
+            btn.innerText = "Expandir";
+        } else {
+            side.style.display = 'flex';
+            btn.innerText = "Recolher";
+        }
+    }
+
     function render() {
         const pendingContainer = document.getElementById('pending-tasks'), completedContainer = document.getElementById('completed-tasks');
         const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
 
+        // Formata a data para o Badge: "04 02 2026"
+        const badge = document.getElementById('date-badge');
+        if(selDate) {
+            const parts = selDate.split('-');
+            badge.innerText = `${parts[2]} ${parts[1]} ${parts[0]}`;
+        } else {
+            badge.innerText = "Selecione";
+        }
+
         pendingContainer.innerHTML = `<div class="section-title">Pendentes</div>` + 
-            (filtered.filter(t => !t.done).map(t => createTaskHtml(t)).join('') || '<p style="font-size:12px; color:#ccc;">Vazio ✨</p>');
+            (filtered.filter(t => !t.done).map(t => createTaskHtml(t)).join('') || '<p style="font-size:12px; color:#ccc;">Tudo pronto! ✨</p>');
         
         completedContainer.innerHTML = filtered.some(t => t.done) ? `<div class="section-title">Concluídas</div>` + 
             filtered.filter(t => t.done).map(t => createTaskHtml(t)).join('') : '';
@@ -142,12 +138,10 @@
     }
 
     function createTaskHtml(t) {
-        const color = `var(--${t.category || 'gym'})`;
-        return `<div class="task-card" style="border-left-color: ${color}" onclick="toggle(${t.id})">
-            <div class="task-icon" style="background:${color}20; color:${color}">${t.done ? '✅' : '📌'}</div>
+        return `<div class="task-card" style="border-left-color: var(--lilas)" onclick="toggle(${t.id})">
             <div style="flex:1">
                 <div style="font-weight:800; font-size:15px;">${t.title}</div>
-                <div style="font-size:10px; color:${color}; font-weight:800; text-transform:uppercase;">${t.category}</div>
+                <div style="font-size:10px; color:var(--lilas); font-weight:800;">${(t.category || 'Geral').toUpperCase()}</div>
             </div>
             <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:20px;">×</button>
         </div>`;
@@ -170,15 +164,7 @@
 
     function filterDate(d) {
         selDate = (selDate === d) ? "" : d;
-        const info = document.getElementById('selected-date-info');
-        if(selDate) {
-            info.innerText = "Data: " + selDate.split('-').reverse().join('');
-            info.style.display = "block";
-            document.getElementById('add-fab').style.display = "flex";
-        } else {
-            info.style.display = "none";
-            document.getElementById('add-fab').style.display = "none";
-        }
+        document.getElementById('add-fab').style.display = selDate ? "flex" : "none";
         render();
         calculatePerformance();
     }
@@ -189,17 +175,16 @@
         const done = dayTasks.filter(t => t.done).length;
         document.getElementById('perf-done').innerText = `${done}/${dayTasks.length}`;
         const pending = dayTasks.filter(t => !t.done);
-        document.getElementById('perf-focus').innerText = pending.length > 0 ? (pending[0].category || "Geral").toUpperCase() : "OK!";
+        document.getElementById('perf-focus').innerText = pending.length > 0 ? (pending[0].category || "Geral").toUpperCase() : "OK";
     }
 
     function changeMonth(step) { currentViewDate.setMonth(currentViewDate.getMonth() + step); renderCalendar(); }
-    function openModal() { document.getElementById('modal').style.display="flex"; document.getElementById('t-in').focus(); }
-    function closeM() { document.getElementById('modal').style.display="none"; }
-    function add() {
-        const title = document.getElementById('t-in').value; if(!title) return;
-        tasks.push({ id: Date.now(), title, date: selDate, done: false, category: selCat });
-        db.ref('hub_raquel_v2026').set({ tasks });
-        document.getElementById('t-in').value = ""; closeM();
+    function openModal() { 
+        const t = prompt("O que vamos fazer?"); 
+        if(t) {
+            tasks.push({ id: Date.now(), title: t, date: selDate, done: false, category: 'gym' });
+            db.ref('hub_raquel_v2026').set({ tasks });
+        }
     }
     function toggle(id) {
         const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done;
