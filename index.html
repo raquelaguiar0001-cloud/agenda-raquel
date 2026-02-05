@@ -32,11 +32,9 @@
         .perf-mini-val { font-size: 14px; font-weight: 800; color: white; }
         .sync-btn { background: white; border: none; width: 35px; height: 35px; border-radius: 10px; color: var(--lilas); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
-        /* Frases Motivacionais Expandidas */
         .motivation-container { background: white; padding: 12px 25px; border-radius: 18px; text-align: center; align-self: center; width: fit-content; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.05); min-height: 50px; display: flex; align-items: center; justify-content: center; }
         .motivation-text { font-size: 13px; font-weight: 600; color: var(--lilas); font-style: italic; line-height: 1.4; }
 
-        /* Barra de Controle */
         .control-bar { background: white; margin: 15px; padding: 12px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .month-label { font-family: 'Syne', sans-serif; color: var(--lilas); text-transform: capitalize; font-size: 16px; }
         .date-badge { background: #f0eeff; color: var(--lilas); padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 12px; }
@@ -44,7 +42,6 @@
 
         .main-container { display: flex; flex: 1; overflow: hidden; padding: 0 15px 15px; gap: 15px; }
         
-        /* Sidebar Calendário com Destaque Padronizado */
         #sidebar-cal { width: 280px; background: white; border-radius: 25px; padding: 15px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: fit-content; }
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
         
@@ -52,7 +49,6 @@
         .day.has-task { background: #f0eeff; }
         .day.today { border: 2px solid var(--lilas); color: var(--lilas); }
         
-        /* O Diferencial Visual ao Clicar */
         .day.selected-day { 
             background: var(--lilas) !important; 
             color: white !important; 
@@ -61,7 +57,6 @@
             z-index: 2;
         }
 
-        /* Task Cards */
         .task-section { flex: 1; overflow-y: auto; padding: 0 5px; }
         .section-title { font-size: 10px; font-weight: 800; color: var(--lilas); margin: 15px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
         .task-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border-left: 6px solid #dfe6e9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
@@ -163,8 +158,22 @@
 
     function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
 
+    // LOGICA DE TRANSIÇÃO AUTOMÁTICA
+    function rolloverTasks() {
+        const todayStr = new Date().toISOString().split('T')[0];
+        let changed = false;
+        tasks.forEach(t => {
+            if (!t.done && t.date < todayStr) {
+                t.date = todayStr;
+                changed = true;
+            }
+        });
+        if (changed) db.ref('hub_raquel_v2026').set({ tasks });
+    }
+
     db.ref('hub_raquel_v2026').on('value', snap => {
         tasks = (snap.val() || {}).tasks || [];
+        rolloverTasks(); // Executa ao carregar os dados
         render();
         calculatePerformance();
         updateQuote();
