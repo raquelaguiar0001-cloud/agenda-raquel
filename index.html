@@ -6,6 +6,7 @@
     <title>Agenda Raquel</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🗓️</text></svg>">
+    
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%238e7dff%22/><text y=%22.75em%22 x=%225%22 font-size=%2275%22>🗓️</text></svg>">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -131,14 +132,8 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // CORREÇÃO DE FUSO HORÁRIO: Pega a data local real (Brasil)
-    const getTodayStr = () => {
-        const d = new Date();
-        const z = d.getTimezoneOffset() * 60000;
-        const local = new Date(d - z);
-        return local.toISOString().split('T')[0];
-    };
-
+    // INICIALIZAÇÃO COM A DATA ATUAL AUTOMÁTICA
+    const getTodayStr = () => new Date().toISOString().split('T')[0];
     let tasks = [], currentViewDate = new Date(), selDate = getTodayStr(), selCat = "fitness", selLabel = "💪 Fitness";
     
     const quotes = [
@@ -186,8 +181,6 @@
     function render() {
         const pendingContainer = document.getElementById('pending-tasks'), completedContainer = document.getElementById('completed-tasks');
         const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
-        
-        // Formata para exibir com barras no badge (Ex: 05/02/2026)
         document.getElementById('date-badge').innerText = selDate ? selDate.split('-').reverse().join('/') : "---";
 
         pendingContainer.innerHTML = `<div class="section-title">Pendentes</div>` + 
@@ -225,7 +218,7 @@
     }
 
     function filterDate(d) {
-        selDate = d;
+        selDate = (selDate === d) ? "" : d;
         render();
         calculatePerformance();
     }
