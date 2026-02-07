@@ -6,7 +6,6 @@
     <title>Agenda Raquel</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🗓️</text></svg>">
-    
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%238e7dff%22/><text y=%22.75em%22 x=%225%22 font-size=%2275%22>🗓️</text></svg>">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -132,8 +131,15 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // INICIALIZAÇÃO COM A DATA ATUAL AUTOMÁTICA
-    const getTodayStr = () => new Date().toISOString().split('T')[0];
+    // CORREÇÃO: Pega a data local (respeita o fuso horário do Brasil)
+    const getTodayStr = () => {
+        const d = new Date();
+        const ano = d.getFullYear();
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const dia = String(d.getDate()).padStart(2, '0');
+        return `${ano}-${mes}-${dia}`;
+    };
+
     let tasks = [], currentViewDate = new Date(), selDate = getTodayStr(), selCat = "fitness", selLabel = "💪 Fitness";
     
     const quotes = [
@@ -141,7 +147,7 @@
         "Dificuldades preparam pessoas comuns para destinos extraordinários. (C.S. Lewis)",
         "O que você é hoje é resultado das suas escolhas de ontem. (Tiago Brunet)",
         "Fé não é a ausência de medo, mas a confiança em Deus apesar dele. (Talita Pereira)",
-        "O sucesso sem felicidade é o pior tipo de fracasso. (Augusto Cury)",
+        "O success sem felicidade é o pior tipo de fracasso. (Augusto Cury)",
         "Não remova os obstáculos, peça força para superá-los. (Cora Coralina)",
         "Sua herança é o que você deixa nos outros, não para os outros. (Tiago Brunet)",
         "A esperança é a única coisa mais forte que o medo.",
@@ -180,8 +186,8 @@
 
     function render() {
         const pendingContainer = document.getElementById('pending-tasks'), completedContainer = document.getElementById('completed-tasks');
-        const filtered = selDate ? tasks.filter(t => t.date === selDate) : tasks;
-        document.getElementById('date-badge').innerText = selDate ? selDate.split('-').reverse().join('/') : "---";
+        const filtered = tasks.filter(t => t.date === selDate);
+        document.getElementById('date-badge').innerText = selDate.split('-').reverse().join('/');
 
         pendingContainer.innerHTML = `<div class="section-title">Pendentes</div>` + 
             (filtered.filter(t => !t.done).map(t => createTaskHtml(t)).join('') || '<p style="font-size:12px; color:#ccc;">Vazio ✨</p>');
@@ -218,14 +224,13 @@
     }
 
     function filterDate(d) {
-        selDate = (selDate === d) ? "" : d;
+        selDate = d;
         render();
         calculatePerformance();
     }
 
     function calculatePerformance() {
-        const dateToCalc = selDate || getTodayStr();
-        const dayTasks = tasks.filter(t => t.date === dateToCalc);
+        const dayTasks = tasks.filter(t => t.date === selDate);
         const done = dayTasks.filter(t => t.done).length;
         document.getElementById('perf-done').innerText = `${done}/${dayTasks.length}`;
         const pending = dayTasks.filter(t => !t.done);
@@ -244,7 +249,8 @@
     function add() {
         const t = document.getElementById('t-in').value;
         if(!t) return;
-        tasks.push({ id: Date.now(), title: t, date: selDate || getTodayStr(), done: false, category: selCat, label: selLabel });
+        // TRAVA: Usa sempre selDate (que agora é data local) para salvar
+        tasks.push({ id: Date.now(), title: t, date: selDate, done: false, category: selCat, label: selLabel });
         db.ref('hub_raquel_v2026').set({ tasks });
         document.getElementById('t-in').value = ""; closeM();
     }
