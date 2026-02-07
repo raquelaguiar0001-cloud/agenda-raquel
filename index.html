@@ -47,9 +47,9 @@
         .day.today { border: 2px solid var(--lilas); color: var(--lilas); }
         .day.selected-day { background: var(--lilas) !important; color: white !important; box-shadow: 0 4px 12px rgba(142, 125, 255, 0.4); transform: scale(1.1); z-index: 2; }
 
-        .task-section { flex: 1; overflow-y: auto; padding: 0 5px; }
+        .task-section { flex: 1; overflow-y: auto; padding: 0 5px 80px; } /* Ajuste de padding inferior aqui */
         .section-title { font-size: 10px; font-weight: 800; color: var(--lilas); margin: 15px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .task-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border-left: 6px solid #dfe6e9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .task-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border-left: 6px solid #dfe6e9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative; }
         .task-card.is-done { opacity: 0.5; filter: grayscale(1); }
         .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
@@ -131,7 +131,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // CORREÇÃO: Pega a data local (respeita o fuso horário do Brasil)
     const getTodayStr = () => {
         const d = new Date();
         const ano = d.getFullYear();
@@ -147,7 +146,7 @@
         "Dificuldades preparam pessoas comuns para destinos extraordinários. (C.S. Lewis)",
         "O que você é hoje é resultado das suas escolhas de ontem. (Tiago Brunet)",
         "Fé não é a ausência de medo, mas a confiança em Deus apesar dele. (Talita Pereira)",
-        "O success sem felicidade é o pior tipo de fracasso. (Augusto Cury)",
+        "O sucesso sem felicidade é o pior tipo de fracasso. (Augusto Cury)",
         "Não remova os obstáculos, peça força para superá-los. (Cora Coralina)",
         "Sua herança é o que você deixa nos outros, não para os outros. (Tiago Brunet)",
         "A esperança é a única coisa mais forte que o medo.",
@@ -206,7 +205,7 @@
                 <div style="font-weight:800; font-size:15px;">${t.title}</div>
                 <div style="font-size:10px; color:var(--${t.category}); font-weight:800; text-transform:uppercase;">${t.label}</div>
             </div>
-            <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:22px;">×</button>
+            <button onclick="del(event, ${t.id})" style="border:none; background:none; color:#ccc; font-size:22px; padding: 10px; z-index: 10;">×</button>
         </div>`;
     }
 
@@ -249,7 +248,6 @@
     function add() {
         const t = document.getElementById('t-in').value;
         if(!t) return;
-        // TRAVA: Usa sempre selDate (que agora é data local) para salvar
         tasks.push({ id: Date.now(), title: t, date: selDate, done: false, category: selCat, label: selLabel });
         db.ref('hub_raquel_v2026').set({ tasks });
         document.getElementById('t-in').value = ""; closeM();
