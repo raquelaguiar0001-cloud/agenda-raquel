@@ -55,7 +55,6 @@
         .task-card.is-done { opacity: 0.6; filter: grayscale(1); }
         .task-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
-        /* CORES DOS CARDS MANTIDAS LEVES NO FUNDO MAS FORTES NO ICONE */
         .bg-work { background: #fff0f0; color: var(--work); }
         .bg-fitness { background: #f3f0ff; color: var(--fitness); }
         .bg-home { background: #ebfaf6; color: var(--home); }
@@ -63,24 +62,12 @@
 
         .fab-add { position: fixed; bottom: 30px; right: 25px; background: var(--lilas); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; }
 
-        /* MODAL E BOTÕES DE CATEGORIA COM INTENSIDADE AUMENTADA */
         #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 1000; }
         .modal-box { background: #d1d1e0; padding: 25px; border-radius: 30px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         .modal-box h3 { color: #2d3436; font-weight: 800; margin-bottom: 20px; }
         
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        
-        /* INTENSIDADE DAS LETRAS AQUI */
-        .cat-btn { 
-            padding: 15px 10px; 
-            border-radius: 12px; 
-            font-size: 12px; 
-            font-weight: 900; /* Letra extra negrito */
-            cursor: pointer; 
-            border: 3px solid transparent; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .cat-btn { padding: 15px 10px; border-radius: 12px; font-size: 12px; font-weight: 900; cursor: pointer; border: 3px solid transparent; text-transform: uppercase; letter-spacing: 0.5px; }
         
         input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #b8b8c9; margin-bottom: 15px; font-size: 15px; text-align: center; background: #e0e0eb; color: #2d3436; font-weight: 600; }
         input::placeholder { color: #8e8e9e; }
@@ -150,12 +137,10 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
+    // Função para pegar a data de hoje no formato YYYY-MM-DD respeitando o fuso local
     const getTodayStr = () => {
-        const d = new Date();
-        const ano = d.getFullYear();
-        const mes = String(d.getMonth() + 1).padStart(2, '0');
-        const dia = String(d.getDate()).padStart(2, '0');
-        return `${ano}-${mes}-${dia}`;
+        const now = new Date();
+        return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
     };
 
     let tasks = [], currentViewDate = new Date(), selDate = getTodayStr(), selCat = "fitness", selLabel = "💪 Fitness";
@@ -164,8 +149,24 @@
 
     function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
 
+    // NOVA LÓGICA DE ROLLOVER: Garante que tarefas pendentes de qualquer data passada venham para hoje
+    function rolloverTasks() {
+        const today = getTodayStr();
+        let changed = false;
+        tasks.forEach(t => {
+            if (!t.done && t.date < today) {
+                t.date = today;
+                changed = true;
+            }
+        });
+        if (changed) {
+            db.ref('hub_raquel_v2026').set({ tasks });
+        }
+    }
+
     db.ref('hub_raquel_v2026').on('value', snap => {
         tasks = (snap.val() || {}).tasks || [];
+        rolloverTasks(); // Executa sempre que os dados mudam ou o app abre
         render();
         calculatePerformance();
         updateQuote();
