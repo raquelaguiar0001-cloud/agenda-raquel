@@ -18,7 +18,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Syne:wght@700&display=swap');
         
-        :root { --bg: #d1d1e0; --lilas: #8e7dff; --work: #d63031; --fitness: #6c5ce7; --home: #00b894; --study: #e1b12c; }
+        :root { --bg: #d1d1e0; --lilas: #8e7dff; --work: #d63031; --fitness: #6c5ce7; --home: #00b894; --study: #e1b12c; --srs: #0984e3; }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: #2d3436; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -40,6 +40,10 @@
         .date-badge { background: #f0eeff; color: var(--lilas); padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 12px; }
         .expand-btn { color: var(--lilas); font-weight: 800; font-size: 10px; cursor: pointer; border: none; background: none; text-transform: uppercase; }
 
+        .nav-tabs { display: flex; gap: 10px; margin: 0 15px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 15px 15px 0 0; border: none; background: #b8b8c9; font-weight: 800; font-size: 11px; cursor: pointer; color: white; transition: 0.3s; }
+        .tab-btn.active { background: white; color: var(--lilas); }
+
         .main-container { display: flex; flex: 1; overflow: hidden; padding: 0 15px 15px; gap: 15px; }
         #sidebar-cal { width: 280px; background: white; border-radius: 25px; padding: 15px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: fit-content; }
         .grid-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
@@ -59,10 +63,11 @@
         .bg-fitness { background: #f3f0ff; color: var(--fitness); }
         .bg-home { background: #ebfaf6; color: var(--home); }
         .bg-study { background: #fffdf0; color: var(--study); }
+        .bg-srs { background: #e1f5fe; color: var(--srs); }
 
         .fab-add { position: fixed; bottom: 30px; right: 25px; background: var(--lilas); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; }
 
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 1000; }
+        #modal, #modal-srs { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); z-index: 1000; }
         .modal-box { background: #d1d1e0; padding: 25px; border-radius: 30px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         .modal-box h3 { color: #2d3436; font-weight: 800; margin-bottom: 20px; }
         
@@ -71,6 +76,11 @@
         
         input { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #b8b8c9; margin-bottom: 15px; font-size: 15px; text-align: center; background: #e0e0eb; color: #2d3436; font-weight: 600; }
         input::placeholder { color: #8e8e9e; }
+
+        .srs-list { background: white; border-radius: 20px; padding: 15px; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .srs-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; flex-direction: column; gap: 5px; }
+        .srs-dates { display: flex; flex-wrap: wrap; gap: 5px; font-size: 9px; }
+        .srs-tag { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #666; }
 
         @media (max-width: 800px) { .main-container { flex-direction: column; } #sidebar-cal { width: 100%; } }
     </style>
@@ -101,6 +111,11 @@
     </div>
 </div>
 
+<nav class="nav-tabs">
+    <button class="tab-btn active" id="tab-agenda" onclick="switchTab('agenda')">AGENDA</button>
+    <button class="tab-btn" id="tab-srs" onclick="switchTab('srs')">SRS CONCURSO</button>
+</nav>
+
 <div class="main-container">
     <aside id="sidebar-cal">
         <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
@@ -110,13 +125,18 @@
         <div class="grid-cal" id="calendar-grid"></div>
     </aside>
 
-    <section class="task-section">
+    <section class="task-section" id="view-agenda">
         <div id="pending-tasks"></div>
         <div id="completed-tasks"></div>
     </section>
+
+    <section class="task-section" id="view-srs" style="display:none;">
+        <div class="section-title">Meus Assuntos em Revisão</div>
+        <div id="srs-container" class="srs-list"></div>
+    </section>
 </div>
 
-<button id="add-fab" class="fab-add" onclick="openModal()">+</button>
+<button id="add-fab" class="fab-add" onclick="openCorrectModal()">+</button>
 
 <div id="modal" onclick="closeM()">
     <div class="modal-box" onclick="event.stopPropagation()">
@@ -132,24 +152,32 @@
     </div>
 </div>
 
+<div id="modal-srs" onclick="closeSRS()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <h3 style="margin:0;">Novo Estudo SRS</h3>
+        <input type="text" id="srs-title" placeholder="Assunto (ex: Dir. Constitucional)">
+        <input type="text" id="srs-date" placeholder="Data Inicial (DDMMYYYY)" maxlength="8">
+        <p style="font-size:10px; color:#666; margin-top:-10px; margin-bottom:10px;">As revisões 24h, 7d, 15d e 30d serão criadas.</p>
+        <button onclick="addSRS()" style="background:var(--srs); color:white; border:none; padding:14px; border-radius:10px; width:100%; font-weight:800; cursor:pointer;">CADASTRAR E GERAR CICLO</button>
+    </div>
+</div>
+
 <script>
     const firebaseConfig = { apiKey: "AIzaSyAXIOrHsZbHXvOIGTk0HS8NOwVBvpmwrOo", databaseURL: "https://ue-joao-tavares-da-costa-default-rtdb.firebaseio.com", projectId: "ue-joao-tavares-da-costa" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // Função para pegar a data de hoje no formato YYYY-MM-DD respeitando o fuso local
     const getTodayStr = () => {
         const now = new Date();
         return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
     };
 
-    let tasks = [], currentViewDate = new Date(), selDate = getTodayStr(), selCat = "fitness", selLabel = "💪 Fitness";
+    let tasks = [], srsItems = [], currentViewDate = new Date(), selDate = getTodayStr(), selCat = "fitness", selLabel = "💪 Fitness", activeTab = 'agenda';
     
     const quotes = ["A gratidão é o solo onde a alegria floresce.", "Dificuldades preparam destinos extraordinários.", "O sucesso sem felicidade é o pior fracasso.", "A sabedoria é a arte de ouvir o que a vida diz."];
 
     function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
 
-    // NOVA LÓGICA DE ROLLOVER: Garante que tarefas pendentes de qualquer data passada venham para hoje
     function rolloverTasks() {
         const today = getTodayStr();
         let changed = false;
@@ -159,18 +187,29 @@
                 changed = true;
             }
         });
-        if (changed) {
-            db.ref('hub_raquel_v2026').set({ tasks });
-        }
+        if (changed) save();
     }
 
     db.ref('hub_raquel_v2026').on('value', snap => {
-        tasks = (snap.val() || {}).tasks || [];
-        rolloverTasks(); // Executa sempre que os dados mudam ou o app abre
+        const val = snap.val() || {};
+        tasks = val.tasks || [];
+        srsItems = val.srsItems || [];
+        rolloverTasks();
         render();
+        renderSRS();
         calculatePerformance();
         updateQuote();
     });
+
+    function save() { db.ref('hub_raquel_v2026').set({ tasks, srsItems }); }
+
+    function switchTab(tab) {
+        activeTab = tab;
+        document.getElementById('view-agenda').style.display = tab === 'agenda' ? 'block' : 'none';
+        document.getElementById('view-srs').style.display = tab === 'srs' ? 'block' : 'none';
+        document.getElementById('tab-agenda').classList.toggle('active', tab === 'agenda');
+        document.getElementById('tab-srs').classList.toggle('active', tab === 'srs');
+    }
 
     function toggleSidebar() {
         const side = document.getElementById('sidebar-cal');
@@ -194,7 +233,7 @@
     }
 
     function createTaskHtml(t) {
-        const icons = { fitness: '💪', work: '💼', home: '🏠', study: '📚' };
+        const icons = { fitness: '💪', work: '💼', home: '🏠', study: '📚', srs: '🧠' };
         return `<div class="task-card ${t.done?'is-done':''}" style="border-left-color: var(--${t.category})" onclick="toggle(${t.id})">
             <div class="task-icon bg-${t.category}">${t.done ? '✨' : icons[t.category]}</div>
             <div style="flex:1">
@@ -218,6 +257,75 @@
         }
     }
 
+    // --- LÓGICA SRS ---
+    function openCorrectModal() {
+        if(activeTab === 'agenda') openModal();
+        else openSRS();
+    }
+
+    function openSRS() { document.getElementById('modal-srs').style.display="flex"; document.getElementById('srs-title').focus(); }
+    function closeSRS() { document.getElementById('modal-srs').style.display="none"; }
+
+    function addSRS() {
+        const title = document.getElementById('srs-title').value;
+        const rawDate = document.getElementById('srs-date').value; // DDMMYYYY
+        if(!title || rawDate.length < 8) return;
+
+        const day = rawDate.substring(0,2), month = rawDate.substring(2,4), year = rawDate.substring(4,8);
+        const startDate = new Date(year, month - 1, day);
+        
+        const intervals = [1, 7, 15, 30];
+        const srsId = Date.now();
+        const generatedDates = [];
+
+        // Adiciona o estudo inicial como tarefa de estudo hoje/data escolhida
+        tasks.push({ id: Date.now() + 1, title: `Estudo: ${title}`, date: `${year}-${month}-${day}`, done: false, category: 'study', label: '📚 Estudo' });
+
+        intervals.forEach(days => {
+            const revDate = new Date(startDate);
+            revDate.setDate(startDate.getDate() + days);
+            const dateStr = revDate.getFullYear() + '-' + String(revDate.getMonth() + 1).padStart(2, '0') + '-' + String(revDate.getDate()).padStart(2, '0');
+            
+            tasks.push({
+                id: Date.now() + days + 10,
+                title: `Revisar R${days}: ${title}`,
+                date: dateStr,
+                done: false,
+                category: 'srs',
+                label: `🧠 SRS ${days}d`
+            });
+            generatedDates.push(dateStr.split('-').reverse().join('/'));
+        });
+
+        srsItems.push({ id: srsId, title, start: rawDate, revisions: generatedDates });
+        save();
+        document.getElementById('srs-title').value = ""; document.getElementById('srs-date').value = "";
+        closeSRS();
+        switchTab('agenda');
+    }
+
+    function renderSRS() {
+        const container = document.getElementById('srs-container');
+        container.innerHTML = srsItems.length ? srsItems.map(item => `
+            <div class="srs-item">
+                <div style="font-weight:800; color:var(--srs)">${item.title}</div>
+                <div class="srs-dates">
+                    <span class="srs-tag">Início: ${item.start.substring(0,2)}/${item.start.substring(2,4)}</span>
+                    ${item.revisions.map(d => `<span class="srs-tag">R: ${d}</span>`).join('')}
+                </div>
+                <button onclick="delSRS(${item.id})" style="border:none; background:none; color:red; font-size:10px; text-align:right;">Excluir Histórico</button>
+            </div>
+        `).join('') : '<p style="font-size:11px; color:#999;">Nenhum ciclo ativo.</p>';
+    }
+
+    function delSRS(id) {
+        if(confirm('Isso remove o registro do histórico SRS (as tarefas já criadas no calendário permanecem). Confirmar?')) {
+            srsItems = srsItems.filter(i => i.id !== id);
+            save();
+        }
+    }
+
+    // --- FUNÇÕES BASE ---
     function filterDate(d) { selDate = d; render(); calculatePerformance(); }
     function changeMonth(step) { currentViewDate.setMonth(currentViewDate.getMonth() + step); renderCalendar(); }
     function openModal() { document.getElementById('modal').style.display="flex"; document.getElementById('t-in').focus(); }
@@ -228,17 +336,17 @@
         const t = document.getElementById('t-in').value;
         if(!t) return;
         tasks.push({ id: Date.now(), title: t, date: selDate, done: false, category: selCat, label: selLabel });
-        db.ref('hub_raquel_v2026').set({ tasks });
+        save();
         document.getElementById('t-in').value = ""; closeM();
     }
     
     function toggle(id) {
         const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done;
         if(tasks[i].done) confetti({ particleCount: 40, spread: 50, colors: ['#8e7dff'] });
-        db.ref('hub_raquel_v2026').set({ tasks });
+        save();
     }
     
-    function del(e, id) { e.stopPropagation(); if(confirm('Excluir?')) { tasks = tasks.filter(t => t.id !== id); db.ref('hub_raquel_v2026').set({ tasks }); } }
+    function del(e, id) { e.stopPropagation(); if(confirm('Excluir tarefa?')) { tasks = tasks.filter(t => t.id !== id); save(); } }
 
     function calculatePerformance() {
         const dayTasks = tasks.filter(t => t.date === selDate);
