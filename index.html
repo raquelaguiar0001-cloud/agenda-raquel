@@ -32,8 +32,8 @@
         .perf-mini-val { font-size: 14px; font-weight: 800; color: white; }
         .sync-btn { background: white; border: none; width: 35px; height: 35px; border-radius: 10px; color: var(--lilas); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
-        .motivation-container { background: white; padding: 12px 25px; border-radius: 18px; text-align: center; align-self: center; width: fit-content; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.05); min-height: 50px; display: flex; align-items: center; justify-content: center; }
-        .motivation-text { font-size: 13px; font-weight: 600; color: var(--lilas); font-style: italic; line-height: 1.4; }
+        .motivation-container { background: white; padding: 12px 25px; border-radius: 18px; text-align: center; align-self: center; width: fit-content; max-width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.05); min-height: 65px; display: flex; align-items: center; justify-content: center; }
+        .motivation-text { font-size: 12px; font-weight: 600; color: var(--lilas); font-style: italic; line-height: 1.4; }
 
         .control-bar { background: white; margin: 15px; padding: 12px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .month-label { font-family: 'Syne', sans-serif; color: var(--lilas); text-transform: capitalize; font-size: 16px; }
@@ -167,14 +167,37 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
+    // CORREÇÃO DATA LOCAL: Garante que "hoje" seja o dia real no seu aparelho
     const getTodayStr = () => {
-        const now = new Date();
-        return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+        const d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     };
 
     let tasks = [], srsItems = [], currentViewDate = new Date(), selDate = getTodayStr(), selCat = "fitness", selLabel = "💪 Fitness", activeTab = 'agenda';
     
-    const quotes = ["A gratidão é o solo onde a alegria floresce.", "Dificuldades preparam destinos extraordinários.", "O sucesso sem felicidade é o pior fracasso.", "A sabedoria é a arte de ouvir o que a vida diz."];
+    const quotes = [
+        "O sucesso é o resultado de decisões, não de condições. (Tiago Brunet)",
+        "Educar a mente sem educar o coração não é educação. (Augusto Cury)",
+        "O seu futuro é decidido pelas decisões que você toma hoje. (Tiago Brunet)",
+        "A gratidão é o solo onde a alegria floresce. (Charles Spurgeon)",
+        "Fé não é a ausência de medo, mas a confiança em Deus apesar dele. (Talita Pereira)",
+        "Quem ganha sem estratégia, perde sem aviso. (Tiago Brunet)",
+        "Bons alunos aprendem a matemática das coisas, alunos fascinantes aprendem a matemática da emoção. (Augusto Cury)",
+        "Não remova os obstáculos, peça força para superá-los. (Cora Coralina)",
+        "A sabedoria é a arte de ouvir o que a vida tem a dizer. (Augusto Cury)",
+        "Onde não há governo de si mesmo, não há liberdade. (Tiago Brunet)",
+        "Deus não te dá o que você quer, Ele te dá o que você precisa para crescer. (Talita Pereira)",
+        "Não pare até se orgulhar de você. (Talita Pereira)",
+        "Vencer a si mesmo é a maior das vitórias.",
+        "A constância vence o talento quando o talento não tem constância.",
+        "Dificuldades preparam pessoas comuns para destinos extraordinários. (C.S. Lewis)",
+        "O que conta não é o que fizeram de nós, mas o que fazemos com o que fizeram de nós. (Sartre)",
+        "Seja grato pelo que tem enquanto trabalha pelo que quer.",
+        "A esperança é a única coisa mais forte que o medo.",
+        "Destino não é uma questão de sorte, é uma questão de escolha.",
+        "O destino dos fortes é a solidão de decidir o que ninguém quer decidir. (Tiago Brunet)",
+        "Frágeis usam a força, fortes usam a inteligência. (Augusto Cury)"
+    ];
 
     function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
 
@@ -257,7 +280,6 @@
         }
     }
 
-    // --- LÓGICA SRS ---
     function openCorrectModal() {
         if(activeTab === 'agenda') openModal();
         else openSRS();
@@ -268,36 +290,25 @@
 
     function addSRS() {
         const title = document.getElementById('srs-title').value;
-        const rawDate = document.getElementById('srs-date').value; // DDMMYYYY
+        const rawDate = document.getElementById('srs-date').value; 
         if(!title || rawDate.length < 8) return;
 
         const day = rawDate.substring(0,2), month = rawDate.substring(2,4), year = rawDate.substring(4,8);
         const startDate = new Date(year, month - 1, day);
-        
         const intervals = [1, 7, 15, 30];
-        const srsId = Date.now();
         const generatedDates = [];
 
-        // Adiciona o estudo inicial como tarefa de estudo hoje/data escolhida
         tasks.push({ id: Date.now() + 1, title: `Estudo: ${title}`, date: `${year}-${month}-${day}`, done: false, category: 'study', label: '📚 Estudo' });
 
         intervals.forEach(days => {
             const revDate = new Date(startDate);
             revDate.setDate(startDate.getDate() + days);
             const dateStr = revDate.getFullYear() + '-' + String(revDate.getMonth() + 1).padStart(2, '0') + '-' + String(revDate.getDate()).padStart(2, '0');
-            
-            tasks.push({
-                id: Date.now() + days + 10,
-                title: `Revisar R${days}: ${title}`,
-                date: dateStr,
-                done: false,
-                category: 'srs',
-                label: `🧠 SRS ${days}d`
-            });
+            tasks.push({ id: Date.now() + days + 10, title: `Revisar R${days}: ${title}`, date: dateStr, done: false, category: 'srs', label: `🧠 SRS ${days}d` });
             generatedDates.push(dateStr.split('-').reverse().join('/'));
         });
 
-        srsItems.push({ id: srsId, title, start: rawDate, revisions: generatedDates });
+        srsItems.push({ id: Date.now(), title, start: rawDate, revisions: generatedDates });
         save();
         document.getElementById('srs-title').value = ""; document.getElementById('srs-date').value = "";
         closeSRS();
@@ -313,19 +324,18 @@
                     <span class="srs-tag">Início: ${item.start.substring(0,2)}/${item.start.substring(2,4)}</span>
                     ${item.revisions.map(d => `<span class="srs-tag">R: ${d}</span>`).join('')}
                 </div>
-                <button onclick="delSRS(${item.id})" style="border:none; background:none; color:red; font-size:10px; text-align:right;">Excluir Histórico</button>
+                <button onclick="delSRS(${item.id})" style="border:none; background:none; color:red; font-size:10px; text-align:right; cursor:pointer;">Excluir Histórico</button>
             </div>
         `).join('') : '<p style="font-size:11px; color:#999;">Nenhum ciclo ativo.</p>';
     }
 
     function delSRS(id) {
-        if(confirm('Isso remove o registro do histórico SRS (as tarefas já criadas no calendário permanecem). Confirmar?')) {
+        if(confirm('Isso remove o registro do histórico SRS. Confirmar?')) {
             srsItems = srsItems.filter(i => i.id !== id);
             save();
         }
     }
 
-    // --- FUNÇÕES BASE ---
     function filterDate(d) { selDate = d; render(); calculatePerformance(); }
     function changeMonth(step) { currentViewDate.setMonth(currentViewDate.getMonth() + step); renderCalendar(); }
     function openModal() { document.getElementById('modal').style.display="flex"; document.getElementById('t-in').focus(); }
@@ -355,6 +365,11 @@
         const pending = dayTasks.filter(t => !t.done);
         document.getElementById('perf-focus').innerText = pending.length > 0 ? (pending[0].label || "").split(' ')[1]?.toUpperCase() : (dayTasks.length > 0 ? "OK" : "---");
     }
+
+    window.onload = () => {
+        selDate = getTodayStr(); // Força a data correta ao carregar
+        render();
+    };
 </script>
 </body>
 </html>
