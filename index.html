@@ -167,7 +167,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // CORREÇÃO DATA LOCAL: Garante que "hoje" seja o dia real no seu aparelho
     const getTodayStr = () => {
         const d = new Date();
         return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -198,6 +197,20 @@
         "O destino dos fortes é a solidão de decidir o que ninguém quer decidir. (Tiago Brunet)",
         "Frágeis usam a força, fortes usam a inteligência. (Augusto Cury)"
     ];
+
+    // --- SISTEMA DE NOTIFICAÇÕES ---
+    function requestNotificationPermission() {
+        if ("Notification" in window) {
+            Notification.requestPermission();
+        }
+    }
+
+    function sendPush(title, message) {
+        if (Notification.permission === "granted") {
+            new Notification(title, { body: message, icon: "https://cdn-icons-png.flaticon.com/512/1069/1069211.png" });
+        }
+    }
+    // -------------------------------
 
     function updateQuote() { document.getElementById('motivation').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
 
@@ -310,6 +323,7 @@
 
         srsItems.push({ id: Date.now(), title, start: rawDate, revisions: generatedDates });
         save();
+        sendPush("Ciclo SRS Criado!", `Raquel, seu cronograma de ${title} foi gerado com sucesso.`);
         document.getElementById('srs-title').value = ""; document.getElementById('srs-date').value = "";
         closeSRS();
         switchTab('agenda');
@@ -351,8 +365,15 @@
     }
     
     function toggle(id) {
-        const i = tasks.findIndex(t => t.id === id); tasks[i].done = !tasks[i].done;
-        if(tasks[i].done) confetti({ particleCount: 40, spread: 50, colors: ['#8e7dff'] });
+        const i = tasks.findIndex(t => t.id === id); 
+        tasks[i].done = !tasks[i].done;
+        
+        if(tasks[i].done) {
+            confetti({ particleCount: 40, spread: 50, colors: ['#8e7dff'] });
+            // Notificação com frase motivacional
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            sendPush("Mais um passo dado!", randomQuote);
+        }
         save();
     }
     
@@ -367,7 +388,8 @@
     }
 
     window.onload = () => {
-        selDate = getTodayStr(); // Força a data correta ao carregar
+        requestNotificationPermission();
+        selDate = getTodayStr();
         render();
     };
 </script>
